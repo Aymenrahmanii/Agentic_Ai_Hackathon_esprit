@@ -5,3 +5,10 @@ __pycache__/
 .env
 evals/results/
 graph/seed.cypher
+
+# Local tooling and third-party design references
+.claude/
+.impeccable/refs/
+.impeccable/review/
+.impeccable/questions/
+.impeccable/build/

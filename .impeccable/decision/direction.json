@@ -1,0 +1,130 @@
+{
+  "title": "Choose the visual world for the land assistant",
+  "question": "The roll assigned the banknote-and-stamp world. Keep it, take an alternate, or re-roll.",
+  "options": [
+    {
+      "id": "assigned",
+      "label": "Dinar & Timbre",
+      "kicker": "THE ROLL",
+      "lineage": "Tunisian dinar notes and postage stamps",
+      "thesis": "Land is priced and stamped the way Tunisians already read official value: banknote inks, bilingual figures, a postmark on every confirmed request.",
+      "palette": ["#3e2c6e", "#0f6b5c", "#eef2ec", "#1b1f2a", "#b8862b"],
+      "materials": ["intaglio ink", "guilloché hairlines", "perforated stamp edge", "security paper"],
+      "viewport": "Violet band with the bilingual name; conversation left, map and plots right; amounts set as denominations; confirming franks the draft with a bilingual postmark.",
+      "risk": "Guilloché used everywhere becomes a costume; it must stay on the official moments only.",
+      "raised": [
+        { "from": "challenger-zoo-map", "raise": "Zones and plots are flat, unmodulated colour fields: no gradients, no shadows." },
+        { "from": "challenger-fac-catalog", "raise": "Every lot and request carries its serial id as its primary handle, set like a banknote serial." },
+        { "from": "challenger-ruling-engine", "raise": "Three inks plus paper, and every rule a single hairline." },
+        { "from": "challenger-streaming-wall", "raise": "Selecting a lot lifts it and dims the rest, on the map and the plan alike." },
+        { "from": "challenger-datamatics", "raise": "All figures are tabular, so prices and areas compare at a glance." }
+      ]
+    },
+    {
+      "id": "model-pick",
+      "label": "Panneau / لافتة",
+      "kicker": "IMPECCABLE’S PICK",
+      "lineage": "Tunisian bilingual road signage",
+      "thesis": "Finding where your factory goes is wayfinding: bilingual panels point the investor to the zone.",
+      "palette": ["#0b4f8a", "#1d6b3a", "#ffffff", "#f2c230", "#14181f"],
+      "materials": ["reflective sign panel", "bilingual sign lettering", "route chevrons"],
+      "viewport": "Blue header panel, Arabic and French labels stacked like a sign; the answer arrives with a direction panel naming the matching zones.",
+      "risk": "Familiar wayfinding grammar; at laptop density it can swell into oversized labels."
+    },
+    {
+      "id": "challenger-ticket-wallet",
+      "label": "Ticket wallet",
+      "verdict": "competitive",
+      "lineage": "jet-age airline ticket wallets",
+      "thesis": "A request is a coupon book: search, draft and confirmation tear off in sequence and stamp their own state.",
+      "palette": ["#14295e", "#c8372d", "#ffffff", "#5b3f8c"],
+      "materials": ["coupon stock", "carbon numerals", "VOID stamp"],
+      "viewport": "The conversation beside a coupon stack: each found lot a coupon, the draft a validated coupon, a sold lot stamped void.",
+      "case": "Fuses cleanly and states read very clearly, but investors identify less with airline paper than with their own banknotes.",
+      "risk": "Can read as travel-themed if the coupons are not tied tightly to land.",
+      "hero": "https://impeccable.style/worlds/cards/vernacular-ephemera-jet-age-ticket-wallet-hero.webp",
+      "board": "https://impeccable.style/worlds/cards/vernacular-ephemera-jet-age-ticket-wallet.webp"
+    },
+    {
+      "id": "challenger-zoo-map",
+      "label": "Guide map",
+      "verdict": "declined",
+      "lineage": "zoo and gardens guide maps",
+      "thesis": "Zones as swelling lobes of flat colour.",
+      "palette": ["#8ed462", "#f5f1e4", "#2c2e2a", "#ff705d"],
+      "materials": ["flat colour", "capsule labels"],
+      "viewport": "One zone lobe owns the screen.",
+      "risk": "Playful leisure map for a serious purchase.",
+      "case": "Loses both axes: investors do not read land as a day out.",
+      "kept": "Flat, unmodulated colour fields for zones and plots.",
+      "hero": "https://impeccable.style/worlds/cards/aww2-zoo-gardens-guide-map-hero.webp"
+    },
+    {
+      "id": "challenger-fac-catalog",
+      "label": "Factory catalogue",
+      "verdict": "declined",
+      "lineage": "factory records catalogue identity",
+      "thesis": "Every artefact gets a catalogue number.",
+      "palette": ["#0b0b0b", "#ffffff", "#e23b2e"],
+      "materials": ["matte black", "colour codes"],
+      "viewport": "A coded index as the only map.",
+      "risk": "Coded labels hide plain facts.",
+      "case": "Loses both axes: coded state fights clarity.",
+      "kept": "Serial ids as the primary handle.",
+      "hero": "https://impeccable.style/worlds/cards/brand-identity-canon-saville-catalog-sleeve-hero.webp"
+    },
+    {
+      "id": "challenger-ruling-engine",
+      "label": "Reference setting",
+      "verdict": "declined",
+      "lineage": "ruled reference editions",
+      "thesis": "Two columns around a rail of keys.",
+      "palette": ["#1a1a1a", "#c0392b", "#efe8d8"],
+      "materials": ["hairline rules", "bone paper"],
+      "viewport": "A dense reading page.",
+      "risk": "A reading surface, not a task surface.",
+      "case": "Loses both axes for an operating screen.",
+      "kept": "Three inks plus paper; hairline rules only.",
+      "hero": "https://impeccable.style/worlds/cards/rw-centre-rail-reference-setting-hero.webp"
+    },
+    {
+      "id": "challenger-streaming-wall",
+      "label": "Title wall",
+      "verdict": "declined",
+      "lineage": "streaming catalogue walls",
+      "thesis": "Rows of tiles; the focused one grows.",
+      "palette": ["#141414", "#e50914", "#ffffff"],
+      "materials": ["poster tiles"],
+      "viewport": "Horizontal rows of lots.",
+      "risk": "Entertainment browsing for a regulated purchase.",
+      "case": "Loses both axes.",
+      "kept": "Selection lifts one item and dims the rest.",
+      "hero": "https://impeccable.style/worlds/cards/pop-culture-shelf-streaming-title-card-wall-hero.webp"
+    },
+    {
+      "id": "challenger-datamatics",
+      "label": "Data field",
+      "verdict": "declined",
+      "lineage": "data-sublime installations",
+      "thesis": "Barcode columns in pure black and white.",
+      "palette": ["#000000", "#ffffff"],
+      "materials": ["barcode bars", "monospace numerics"],
+      "viewport": "A strobing data wall.",
+      "risk": "Unreadable for an investor.",
+      "case": "Loses both axes.",
+      "kept": "Tabular figures for every price and area.",
+      "hero": "https://impeccable.style/worlds/cards/ikeda-datamatics-hero.webp"
+    }
+  ],
+  "reroll": { "registers": ["safer", "bolder"] },
+  "canon": true,
+  "canonCard": {
+    "label": "The category standard",
+    "thesis": "A clean AI-assistant workspace: chat panel, map, neutral greys and one blue accent, at full craft.",
+    "palette": ["#ffffff", "#111827", "#2563eb", "#f3f4f6"],
+    "materials": ["clean grid", "system UI type"],
+    "viewport": "Chat on the left, map on the right, everything where a SaaS user expects it.",
+    "risk": "Indistinguishable from any other AI assistant by design."
+  },
+  "steer": true
+}

@@ -32,32 +32,50 @@ text-to-speech voice.
 
 ## The web interface
 
-Start the app (see [Quickstart](#quickstart)) and open http://127.0.0.1:8000. The interface is
-in French, the administrative language AFI works in; the conversation follows whatever
-language the user writes or speaks.
+Start the app (see [Quickstart](#quickstart)) and open http://127.0.0.1:8000. Its labels are
+in French or Arabic (the FR / ع switch also flips the layout right-to-left); the conversation
+follows whatever language the user writes or speaks.
+
+The design treats a land request like a ticket wallet: each lot the agent finds is a coupon,
+the request is a carbon copy, and confirming stamps it. Navy and coupon-white, with carbon
+purple for every figure the system fills in and red for the one action that commits.
 
 - **Conversation** with example questions, push-to-talk and an option to read replies aloud.
-  Voice uses the browser's own speech recognition and voice for now (Chrome or Edge), until
-  the Derja speech models are chosen.
-- **Map** of the industrial zones. The zones a search or comparison returns light up and the
-  map flies to them.
-- **Plots drawn to scale** by area and coloured by status (available, reserved, sold), with
-  the lots the agent found outlined.
-- **What the agent did:** each tool call with its arguments and result, and which model
-  answered in how many seconds, so a jury sees the agent working.
-- **Request draft card** with the only button that submits a request. After Confirm it shows
-  the tracking number and the plot turns to reserved.
+  Under each answer, a collapsible strip lists the lookups the agent made, with their
+  arguments, results, and which model answered in how many seconds. Voice uses the browser's
+  own speech recognition and voice for now (Chrome or Edge), until the Derja speech models
+  are chosen.
+- **Lots found**, as coupons: a large zone code (KAI, SFX, BEJ, SBZ), area, total price and
+  price per m², status, and a Reserve button that starts the request. Above them, each zone's
+  plots are drawn to scale by area, with the ones found highlighted. Sold and reserved lots
+  carry a stamp; selecting a lot dims the others.
+- **Map** of the industrial zones; the zones a search returns turn red and the map flies to
+  them.
+- **Your request**, as a carbon copy with the only button that submits it. Confirming presses
+  a bilingual CONFIRMÉE / مؤكّدة stamp on it and reveals the tracking number; the lot turns to
+  reserved on the plan.
 
-A banner says when the data is invented, and the model badge turns amber when the fallback
-model answered.
+A notice says when the data is invented, and the model chip turns amber when the fallback
+model answered. The design decisions are recorded in `PRODUCT.md`, `DESIGN.md` and
+`.impeccable/`.
 
 ### Offline demo mode
 
-If the venue network or a free API fails, restart with `AFI_PROVIDER=replay`. The agent then
-answers the questions recorded in `docs/demo/conversations.json` (including all three
-example questions) with no network. The tools still run for real, so plots, drafts, Confirm
-and tracking numbers behave as in a live demo. Other questions get a short "offline mode"
-notice.
+If the venue network or a free API fails, start the app with the offline settings, which need
+no API key:
+
+```bash
+uv run --env-file .env.offline uvicorn afi_agent.api:create_app --factory
+```
+
+The agent then answers the questions recorded in `docs/demo/conversations.json` (including
+all three example questions) with no network. The tools still run for real, so plots,
+drafts, Confirm and tracking numbers behave as in a live demo. Other questions get a short
+"offline mode" notice.
+
+**Restart the offline server between demo runs.** Once a lot is booked it is reserved, so a
+second run's search no longer returns it, and the recorded answer that names it is then
+refused by the grounding check.
 
 ## See it working
 

@@ -1,0 +1,16 @@
+{
+  "surface": "src/afi_agent/web/index.html",
+  "scope": "direction",
+  "mode": "operate",
+  "seedKey": "03429142",
+  "assigned": "Dinar & Timbre (grounded candidate 6: Tunisian banknotes and postage stamps)",
+  "chosen": {
+    "optionId": "challenger-ticket-wallet",
+    "kind": "challenger",
+    "catalogId": "vernacular-ephemera-jet-age-ticket-wallet",
+    "chosenBy": "user",
+    "date": "2026-11-15"
+  },
+  "buildPath": "code",
+  "buildPathReason": "No image generation available in this session."
+}

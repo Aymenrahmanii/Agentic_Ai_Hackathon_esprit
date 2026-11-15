@@ -1,89 +1,132 @@
 <!doctype html>
-<html lang="fr">
+<html lang="fr" dir="ltr">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Assistant foncier AFI</title>
+  <title>Assistant foncier</title>
+  <meta name="theme-color" content="#0d1b3d">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Readex+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Changa:wght@400;500;600;700&family=Red+Hat+Mono:wght@400;500;600&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
   <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-  <div class="data-banner" id="data-banner" hidden>
-    Données de démonstration : les zones, lots et prix affichés sont inventés, ce ne sont pas des informations de l'AFI.
-  </div>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-mic" viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Z"/><path d="M19 11a7 7 0 0 1-14 0M12 18v3"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6"/><path d="m15 15 5 5"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+    <symbol id="i-speaker" viewBox="0 0 24 24"><path d="M4 10v4h4l5 4V6L8 10H4Z"/><path d="M16.5 9a4 4 0 0 1 0 6"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></symbol>
+    <symbol id="i-parcel" viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M4 12h9M13 5v14"/></symbol>
+  </svg>
 
-  <div class="app">
-    <section class="conversation" aria-label="Conversation">
-      <header class="conversation-head">
-        <div>
-          <h1>Assistant foncier AFI</h1>
-          <p class="subtitle">Terrains industriels, procédures et demandes, en derja, français, العربية ou English.</p>
-        </div>
-        <span class="model-badge" id="model-badge" title="Modèle qui répond">…</span>
-      </header>
+  <header class="topbar">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
+        <rect x="3" y="7" width="34" height="26" rx="2"/>
+        <path d="M3 20h20M23 7v26"/>
+        <path class="brand-mark-accent" d="M27 14h6M27 20h6M27 26h4"/>
+      </svg>
+      <div class="brand-text">
+        <span class="brand-name" data-i18n="brand">Assistant foncier</span>
+        <span class="brand-sub" data-i18n="brandSub">Terrains industriels · Tunisie</span>
+      </div>
+    </div>
+    <div class="topbar-tools">
+      <span class="chip chip-demo" id="demo-chip" hidden>
+        <svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>
+        <span data-i18n="demoChip">Données de démonstration</span>
+      </span>
+      <span class="chip chip-model" id="model-chip">
+        <span class="chip-dot" aria-hidden="true"></span>
+        <span id="model-name">…</span>
+      </span>
+      <div class="lang-switch" role="group" data-i18n-aria="langGroup" aria-label="Langue de l'interface">
+        <button type="button" class="lang" data-lang="fr" aria-pressed="true">FR</button>
+        <button type="button" class="lang" data-lang="ar" aria-pressed="false" lang="ar">ع</button>
+      </div>
+    </div>
+  </header>
+
+  <p class="demo-note" id="demo-note" hidden data-i18n="demoNote">Les zones, lots et prix affichés sont inventés pour la démonstration ; ce ne sont pas des informations de l'AFI.</p>
+
+  <main class="workspace">
+    <section class="pane pane-chat" aria-labelledby="chat-title">
+      <h2 class="pane-title" id="chat-title"><span class="slashes" aria-hidden="true">///</span> <span data-i18n="chatTitle">Conversation</span></h2>
 
       <ol class="messages" id="messages" aria-live="polite">
-        <li class="empty" id="empty">
-          <p>Posez votre question comme au guichet de l'AFI. Par exemple :</p>
+        <li class="welcome" id="welcome">
+          <p class="welcome-lead" data-i18n="welcomeLead">Décrivez votre projet comme au guichet : la région, l'activité, la surface, le budget. L'assistant cherche dans les lots de l'AFI et prépare votre demande.</p>
+          <p class="welcome-hint" data-i18n="welcomeHint">Essayez une de ces questions :</p>
           <div class="examples">
-            <button type="button" class="example" dir="auto">نحب نحل معمل نسيج في القيروان، شنوة الأراضي الموجودة؟</button>
-            <button type="button" class="example" dir="auto">Quels documents faut-il pour réserver un lot ?</button>
-            <button type="button" class="example" dir="auto">Is there any land for a food processing plant under 200,000 dinars?</button>
+            <button type="button" class="example" dir="rtl" lang="ar">نحب نحل معمل نسيج في القيروان، شنوة الأراضي الموجودة؟</button>
+            <button type="button" class="example" lang="fr" dir="ltr">Quels documents faut-il pour réserver un lot ?</button>
+            <button type="button" class="example" lang="en" dir="ltr">Is there any land for a food processing plant under 200,000 dinars?</button>
           </div>
         </li>
       </ol>
 
       <form class="composer" id="composer">
-        <div class="composer-row">
-          <button type="button" class="mic" id="mic" aria-pressed="false" title="Parlez votre question">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-2.08A7 7 0 0 0 19 12h-2Z"/></svg>
-            <span class="visually-hidden">Parler</span>
+        <label class="visually-hidden" for="input" data-i18n="inputLabel">Votre message</label>
+        <div class="composer-field">
+          <textarea id="input" rows="1" dir="auto" autocomplete="off" data-i18n-placeholder="inputPlaceholder" placeholder="Votre question, dans votre langue…"></textarea>
+          <button type="button" class="icon-button mic" id="mic" aria-pressed="false" data-i18n-title="micStart" title="Dicter la question">
+            <svg class="icon" aria-hidden="true"><use href="#i-mic"/></svg>
+            <span class="visually-hidden" data-i18n="micLabel">Dicter</span>
           </button>
-          <label class="visually-hidden" for="input">Votre message</label>
-          <textarea id="input" rows="1" dir="auto" placeholder="Écrivez ou parlez… / اكتب أو تكلّم…" autocomplete="off"></textarea>
-          <button type="submit" class="send" id="send">Envoyer</button>
+          <button type="submit" class="send" id="send">
+            <span data-i18n="send">Envoyer</span>
+            <svg class="icon flip-rtl" aria-hidden="true"><use href="#i-send"/></svg>
+          </button>
         </div>
         <div class="composer-options">
-          <label>Langue du micro
+          <label class="option"><span data-i18n="micLang">Langue du micro</span>
             <select id="speech-lang">
               <option value="ar-TN">Derja / العربية</option>
               <option value="fr-FR">Français</option>
               <option value="en-US">English</option>
             </select>
           </label>
-          <label class="toggle"><input type="checkbox" id="speak-replies"> Lire les réponses à voix haute</label>
-          <span class="voice-note">Voix du navigateur pour l'instant, en attendant le choix des modèles vocaux en derja.</span>
+          <label class="option toggle">
+            <input type="checkbox" id="speak-replies">
+            <svg class="icon" aria-hidden="true"><use href="#i-speaker"/></svg>
+            <span data-i18n="readAloud">Lire les réponses</span>
+          </label>
+          <span class="option-note" data-i18n="voiceNote">Voix du navigateur, en attendant les modèles vocaux en derja.</span>
         </div>
       </form>
     </section>
 
-    <section class="land" aria-label="Terrains industriels">
-      <div class="map-wrap">
-        <div id="map" role="img" aria-label="Carte des zones industrielles"></div>
-        <p class="map-offline" id="map-offline" hidden>La carte a besoin d'une connexion internet. Les parcelles ci-dessous restent disponibles.</p>
-        <ul class="legend" aria-label="Statut des lots">
-          <li><span class="swatch available"></span>Disponible</li>
-          <li><span class="swatch reserved"></span>Réservé</li>
-          <li><span class="swatch sold"></span>Vendu</li>
-        </ul>
+    <section class="pane pane-lots" aria-labelledby="lots-title">
+      <h2 class="pane-title" id="lots-title"><span class="slashes" aria-hidden="true">///</span> <span data-i18n="lotsTitle">Lots trouvés</span> <span class="count" id="lots-count"></span></h2>
+      <div class="zone-plans" id="zone-plans"></div>
+      <ol class="coupons" id="coupons"></ol>
+      <div class="lots-empty" id="lots-empty">
+        <div class="ghost-coupon" aria-hidden="true">
+          <span class="ghost-code">KAI</span><span class="ghost-line"></span><span class="ghost-line short"></span>
+        </div>
+        <p data-i18n="lotsEmpty">Les lots que l'assistant trouve s'affichent ici, avec leur surface, leur prix et leur statut.</p>
       </div>
-
-      <div class="plots">
-        <h2>Parcelles</h2>
-        <p class="plots-hint" id="plots-hint">Les parcelles trouvées par l'assistant s'affichent ici, dessinées à l'échelle de leur surface.</p>
-        <div class="plot-zones" id="plot-zones"></div>
-      </div>
-
-      <details class="trace" id="trace" open>
-        <summary>Ce que l'agent a fait</summary>
-        <p class="trace-empty" id="trace-empty">Pour chaque réponse, les outils utilisés par l'agent et ce qu'ils ont renvoyé.</p>
-        <ol class="trace-steps" id="trace-steps"></ol>
-      </details>
     </section>
-  </div>
+
+    <section class="pane pane-request" aria-labelledby="request-title">
+      <div class="map-block">
+        <h2 class="pane-title" id="map-title"><span class="slashes" aria-hidden="true">///</span> <span data-i18n="mapTitle">Zones industrielles</span></h2>
+        <div class="map-frame">
+          <div id="map" role="img" data-i18n-aria="mapAria" aria-label="Carte des zones industrielles"></div>
+          <p class="map-offline" id="map-offline" hidden data-i18n="mapOffline">La carte a besoin d'une connexion internet.</p>
+        </div>
+      </div>
+      <div class="request-block">
+        <h2 class="pane-title" id="request-title"><span class="slashes" aria-hidden="true">///</span> <span data-i18n="requestTitle">Votre demande</span></h2>
+        <div class="carbon" id="carbon" data-state="empty">
+          <p class="carbon-empty" data-i18n="requestEmpty">Aucune demande en cours. Choisissez un lot : l'assistant préparera un brouillon que vous seul pourrez envoyer.</p>
+        </div>
+      </div>
+    </section>
+  </main>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <script src="/static/app.js"></script>

@@ -22,7 +22,7 @@ def test_interface_is_served_and_always_revalidated() -> None:
     page = client.get("/")
     script = client.get("/static/app.js")
 
-    assert page.status_code == 200 and "Assistant foncier AFI" in page.text
+    assert page.status_code == 200 and "Assistant foncier" in page.text
     assert script.status_code == 200
     assert page.headers["cache-control"] == script.headers["cache-control"] == "no-cache"
 

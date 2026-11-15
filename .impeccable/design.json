@@ -1,0 +1,564 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-15T12:00:00Z",
+  "title": "Design System: Assistant foncier",
+  "extensions": {
+    "colorMeta": {
+      "carrier-navy": {
+        "role": "primary",
+        "displayName": "Carrier Navy",
+        "canonical": "#0d1b3d",
+        "oklch": "oklch(23.2% 0.068 264.8)",
+        "tonalRamp": [
+          "#010727",
+          "#132245",
+          "#2e3f64",
+          "#4b5d84",
+          "#697da6",
+          "#8a9eca",
+          "#aec4f1",
+          "#e7efff"
+        ]
+      },
+      "carrier-navy-2": {
+        "role": "primary",
+        "displayName": "Carrier Navy Raised",
+        "canonical": "#1a2b55",
+        "oklch": "oklch(29.9% 0.079 265.3)",
+        "tonalRamp": [
+          "#01052c",
+          "#11214a",
+          "#2b3e6a",
+          "#485c8b",
+          "#667cad",
+          "#879ed1",
+          "#abc4f8",
+          "#e7effe"
+        ]
+      },
+      "navy-ink": {
+        "role": "primary",
+        "displayName": "Navy Ink",
+        "canonical": "#c9d3ea",
+        "oklch": "oklch(86.6% 0.034 266.9)",
+        "tonalRamp": [
+          "#050a19",
+          "#1d2435",
+          "#383f52",
+          "#555d71",
+          "#747d92",
+          "#959eb4",
+          "#bac4db",
+          "#e8eefe"
+        ]
+      },
+      "jet-red": {
+        "role": "secondary",
+        "displayName": "Jet Red",
+        "canonical": "#d7262d",
+        "oklch": "oklch(56.9% 0.210 25.6)",
+        "tonalRamp": [
+          "#220000",
+          "#490307",
+          "#780f14",
+          "#b00d1c",
+          "#df3034",
+          "#fe645e",
+          "#ffaba3",
+          "#fee9e7"
+        ]
+      },
+      "jet-red-ink": {
+        "role": "secondary",
+        "displayName": "Jet Red Ink",
+        "canonical": "#b31d23",
+        "oklch": "oklch(49.5% 0.184 25.7)",
+        "tonalRamp": [
+          "#210000",
+          "#4c0004",
+          "#7c020e",
+          "#ae151e",
+          "#d4423f",
+          "#fc6760",
+          "#fdaca3",
+          "#ffe9e6"
+        ]
+      },
+      "coupon-white": {
+        "role": "neutral",
+        "displayName": "Coupon White",
+        "canonical": "#ffffff",
+        "oklch": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#242424",
+          "#404040",
+          "#5d5d5d",
+          "#7d7d7d",
+          "#9e9e9e",
+          "#c4c4c4",
+          "#eeeeee"
+        ]
+      },
+      "stock": {
+        "role": "neutral",
+        "displayName": "Stock",
+        "canonical": "#f2f2f0",
+        "oklch": "oklch(96.1% 0.003 106.4)",
+        "tonalRamp": [
+          "#0b0b0a",
+          "#242423",
+          "#40403e",
+          "#5e5e5c",
+          "#7d7d7b",
+          "#9e9e9d",
+          "#c4c4c2",
+          "#eeeeec"
+        ]
+      },
+      "stock-2": {
+        "role": "neutral",
+        "displayName": "Stock Deep",
+        "canonical": "#e6e6e2",
+        "oklch": "oklch(92.4% 0.005 106.5)",
+        "tonalRamp": [
+          "#0b0b09",
+          "#242421",
+          "#40403d",
+          "#5e5e5a",
+          "#7d7d7a",
+          "#9f9f9b",
+          "#c4c4c0",
+          "#efefeb"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#141a2b",
+        "oklch": "oklch(22.1% 0.035 268.6)",
+        "tonalRamp": [
+          "#060a1a",
+          "#1d2335",
+          "#383f52",
+          "#555d72",
+          "#757d93",
+          "#959eb5",
+          "#bbc4db",
+          "#e8eefe"
+        ]
+      },
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Ink Muted",
+        "canonical": "#4a5268",
+        "oklch": "oklch(44.0% 0.038 269.2)",
+        "tonalRamp": [
+          "#060a1b",
+          "#1d2336",
+          "#383f54",
+          "#555d74",
+          "#747d94",
+          "#959eb7",
+          "#bac4dd",
+          "#e8eefe"
+        ]
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Rule",
+        "canonical": "#c9ccd4",
+        "oklch": "oklch(84.5% 0.012 269.5)",
+        "tonalRamp": [
+          "#090b10",
+          "#22242a",
+          "#3d4046",
+          "#5b5d64",
+          "#7a7d84",
+          "#9b9ea6",
+          "#c1c4cc",
+          "#ebeef7"
+        ]
+      },
+      "carbon-purple": {
+        "role": "tertiary",
+        "displayName": "Carbon Purple",
+        "canonical": "#4b2e83",
+        "oklch": "oklch(38.5% 0.136 294.9)",
+        "tonalRamp": [
+          "#10002b",
+          "#2c045d",
+          "#472a7e",
+          "#654aa1",
+          "#846ac5",
+          "#a58cea",
+          "#c8b8fe",
+          "#efecfe"
+        ]
+      },
+      "carbon-wash": {
+        "role": "tertiary",
+        "displayName": "Carbon Wash",
+        "canonical": "#f6f2fc",
+        "oklch": "oklch(96.7% 0.014 304.1)",
+        "tonalRamp": [
+          "#0c0a10",
+          "#25222a",
+          "#413e46",
+          "#5f5c64",
+          "#7f7b84",
+          "#a09ca6",
+          "#c6c2cc",
+          "#f0ecf6"
+        ]
+      },
+      "carbon-copy": {
+        "role": "tertiary",
+        "displayName": "Carbon Copy",
+        "canonical": "#ddd2f2",
+        "oklch": "oklch(88.2% 0.045 301.1)",
+        "tonalRamp": [
+          "#0f061b",
+          "#281f36",
+          "#443a54",
+          "#625873",
+          "#827794",
+          "#a398b7",
+          "#c9bedd",
+          "#f1ebfe"
+        ]
+      },
+      "carbon-copy-2": {
+        "role": "tertiary",
+        "displayName": "Carbon Copy Deep",
+        "canonical": "#cbbbe8",
+        "oklch": "oklch(82.0% 0.065 301.2)",
+        "tonalRamp": [
+          "#100321",
+          "#2a1b3e",
+          "#46375c",
+          "#64557c",
+          "#84759e",
+          "#a595c1",
+          "#cbbbe8",
+          "#f1ebff"
+        ]
+      },
+      "status-green": {
+        "role": "status",
+        "displayName": "Status Green",
+        "canonical": "#1f7a4a",
+        "oklch": "oklch(51.5% 0.113 155.3)",
+        "tonalRamp": [
+          "#001004",
+          "#002d15",
+          "#004d29",
+          "#0e7040",
+          "#3b915f",
+          "#5eb380",
+          "#85daa4",
+          "#c7fed9"
+        ]
+      },
+      "demo-amber": {
+        "role": "status",
+        "displayName": "Demo Amber",
+        "canonical": "#8a5a00",
+        "oklch": "oklch(50.8% 0.108 73.3)",
+        "tonalRamp": [
+          "#160700",
+          "#341f00",
+          "#583800",
+          "#7e540c",
+          "#a47228",
+          "#c7934c",
+          "#efb972",
+          "#feebd3"
+        ]
+      },
+      "demo-amber-bg": {
+        "role": "status",
+        "displayName": "Demo Amber Wash",
+        "canonical": "#fff1cf",
+        "oklch": "oklch(96.1% 0.047 88.3)",
+        "tonalRamp": [
+          "#120900",
+          "#2d2205",
+          "#4a3e22",
+          "#695c3f",
+          "#897c5d",
+          "#aa9d7e",
+          "#d1c3a2",
+          "#fbedcc"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Zone Code",
+        "purpose": "The coupon's zone code only (4.5rem; 3rem under 760px)."
+      },
+      "headline": {
+        "displayName": "Brand",
+        "purpose": "Brand name in the top bar."
+      },
+      "title": {
+        "displayName": "Pane Title",
+        "purpose": "Pane titles, led by a jet-red ///."
+      },
+      "body": {
+        "displayName": "Prose",
+        "purpose": "Conversation and explanatory text; Arabic answers at 1.0625rem / 1.75."
+      },
+      "label": {
+        "displayName": "Tab Caps",
+        "purpose": "Slip tabs, figure tabs, coupon heads, copy labels (0.75rem or 0.6875rem). Tracking resets to 0 in RTL."
+      },
+      "numeral": {
+        "displayName": "Carbon Numerals",
+        "purpose": "Every serial, figure, tool call and tracking number (1rem cells, 1.25rem copy fields, 2.25rem tracking)."
+      }
+    },
+    "cssCustomProperties": {
+      "source": "src/afi_agent/web/styles.css :root",
+      "map": {
+        "--navy": "carrier-navy",
+        "--navy-2": "carrier-navy-2",
+        "--navy-ink": "navy-ink",
+        "--red": "jet-red",
+        "--red-ink": "jet-red-ink",
+        "--coupon": "coupon-white",
+        "--stock": "stock",
+        "--stock-2": "stock-2",
+        "--ink": "ink",
+        "--ink-2": "ink-2",
+        "--rule": "rule",
+        "--carbon": "carbon-purple",
+        "--carbon-copy": "carbon-copy",
+        "--carbon-copy-2": "carbon-copy-2",
+        "--green": "status-green",
+        "--amber": "demo-amber",
+        "--amber-bg": "demo-amber-bg"
+      },
+      "fonts": {
+        "--f-caps": "\"Barlow Condensed\", \"Changa\", \"Arial Narrow\", system-ui, sans-serif",
+        "--f-text": "\"Tajawal\", \"Segoe UI\", system-ui, sans-serif",
+        "--f-num": "\"Red Hat Mono\", ui-monospace, \"Cascadia Mono\", monospace"
+      },
+      "typeScale": {
+        "--t-xs": "0.75rem",
+        "--t-sm": "0.84375rem",
+        "--t-md": "1rem",
+        "--t-lg": "1.25rem",
+        "--t-xl": "1.75rem",
+        "--t-code": "4.5rem"
+      },
+      "other": {
+        "--gap": "16px",
+        "--radius": "3px",
+        "--ease-out": "cubic-bezier(0.16, 1, 0.3, 1)"
+      },
+      "--ink-mask": "Stamp ink texture, not a colour: an SVG feTurbulence fractal-noise alpha mask (160px tile), applied as mask-image on rubber stamps with mix-blend-mode: multiply.",
+      "unnamedLiterals": "carbon-wash (#f6f2fc) is recorded as a token but lives as a literal in styles.css; other literals (#fdf0ef, #2e1b57, #3c2a66, #ebe4f7, #faf8fe, #39c07a, #e9575c, #ecd9a6, #737a8c, #dfe3ec) are one-off state tints and are not system tokens."
+    },
+    "shadows": [
+      {
+        "name": "plot-match-ring",
+        "value": "inset 0 0 0 2px #fff",
+        "purpose": "Marks zone-plan plots matching the current search. State only."
+      },
+      {
+        "name": "mic-listening-pulse",
+        "value": "0 0 0 7px rgba(215, 38, 45, 0.16)",
+        "purpose": "Keyframed pulse on the mic while listening. State only."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "The single easing for every transition and animation."
+      },
+      {
+        "name": "hover",
+        "value": "160ms",
+        "purpose": "Button, example and field hover transitions."
+      },
+      {
+        "name": "deal",
+        "value": "420ms, stagger 60ms, rise 14px",
+        "purpose": "Coupons deal in only when a search returns."
+      },
+      {
+        "name": "select",
+        "value": "220ms; lift 2px, rule to jet red, others to opacity 0.45",
+        "purpose": "Selecting a coupon."
+      },
+      {
+        "name": "arrive",
+        "value": "480ms clip reveal, rise 18px",
+        "purpose": "The carbon copy appears."
+      },
+      {
+        "name": "press",
+        "value": "420ms, scale 1.6 to 1 at -11deg",
+        "purpose": "The confirm stamp presses once."
+      },
+      {
+        "name": "tear",
+        "value": "620ms after 380ms; drop 10px, rotate -1.6deg (mirrored in RTL)",
+        "purpose": "The stub tears along the perforation."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "all animation and transition off",
+        "purpose": "prefers-reduced-motion: reduce. Re-renders (language switch) show the settled state and never replay."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "three-pane",
+        "value": "above 1100px",
+        "purpose": "38fr / 34fr / 28fr panes"
+      },
+      {
+        "name": "two-pane",
+        "value": "1100px",
+        "purpose": "two columns, conversation spans both rows"
+      },
+      {
+        "name": "stacked",
+        "value": "760px",
+        "purpose": "panes stack, 16px gutters, icon-only send, demo chip hidden"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Confirm Button",
+      "kind": "button",
+      "refersTo": "button-confirm",
+      "description": "The one filled jet-red action: confirm the request on the carbon-copy stub.",
+      "html": "<button class=\"ds-confirm\">Confirmer et envoyer</button>",
+      "css": ".ds-confirm{font:600 var(--t-md)/1 var(--f-caps);letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--red);border:0;border-radius:var(--radius);padding:13px 16px;cursor:pointer;min-width:260px;transition:background-color 160ms var(--ease-out)}.ds-confirm:hover{background:var(--red-ink)}.ds-confirm:focus-visible{outline:2px solid var(--navy);outline-offset:2px}"
+    },
+    {
+      "name": "Send Button",
+      "kind": "button",
+      "refersTo": "button-send",
+      "description": "Navy caps button that sends the composer text.",
+      "html": "<button class=\"ds-send\"><span>Envoyer</span><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14M13 6l6 6-6 6\"/></svg></button>",
+      "css": ".ds-send{height:38px;display:inline-flex;align-items:center;gap:8px;font:600 var(--t-md)/1 var(--f-caps);letter-spacing:.06em;text-transform:uppercase;color:#fff;background:var(--navy);border:0;border-radius:var(--radius);padding:0 16px;cursor:pointer;transition:background-color 160ms var(--ease-out)}.ds-send:hover{background:var(--navy-2)}.ds-send:focus-visible{outline:2px solid var(--navy);outline-offset:2px}"
+    },
+    {
+      "name": "Coupon Action",
+      "kind": "button",
+      "refersTo": "button-coupon-action",
+      "description": "Outlined navy caps button on a coupon foot; inverts on hover.",
+      "html": "<button class=\"ds-coupon-action\">Réserver</button>",
+      "css": ".ds-coupon-action{font:600 var(--t-sm)/1 var(--f-caps);letter-spacing:.08em;text-transform:uppercase;color:var(--navy);background:#fff;border:1.5px solid var(--navy);border-radius:var(--radius);padding:7px 12px;cursor:pointer;transition:background-color 160ms var(--ease-out),color 160ms var(--ease-out)}.ds-coupon-action:hover{background:var(--navy);color:#fff}.ds-coupon-action:focus-visible{outline:2px solid var(--navy);outline-offset:2px}"
+    },
+    {
+      "name": "Composer Field",
+      "kind": "input",
+      "refersTo": "composer-field",
+      "description": "Navy-ruled text field; the rule turns carbon purple on focus.",
+      "html": "<label class=\"ds-composer\"><textarea rows=\"1\" placeholder=\"Votre question, dans votre langue...\"></textarea></label>",
+      "css": ".ds-composer{display:flex;border:1.5px solid var(--navy);border-radius:var(--radius);padding:6px 6px 6px 12px;background:#fff;width:320px}.ds-composer:focus-within{border-color:var(--carbon)}.ds-composer textarea{flex:1;font:400 var(--t-md)/1.5 var(--f-text);border:0;outline:0;resize:none;background:transparent;color:var(--ink);padding:5px 0}.ds-composer textarea::placeholder{color:#737a8c}"
+    },
+    {
+      "name": "Top Bar",
+      "kind": "nav",
+      "refersTo": "",
+      "description": "Carrier navy bar with a 4px jet-red rule, caps brand, demo chip and the FR / ع switch.",
+      "html": "<header class=\"ds-topbar\"><div class=\"ds-brand\"><b>Assistant foncier</b><small>Terrains industriels · Tunisie</small></div><div class=\"ds-tools\"><span class=\"ds-chip-demo\">Données de démonstration</span><span class=\"ds-lang\"><button aria-pressed=\"true\">FR</button><button lang=\"ar\" aria-pressed=\"false\">ع</button></span></div></header>",
+      "css": ".ds-topbar{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:12px 24px;background:var(--navy);color:#fff;border-bottom:4px solid var(--red)}.ds-brand{display:flex;flex-direction:column;line-height:1.1}.ds-brand b{font:700 var(--t-xl)/1.1 var(--f-caps);letter-spacing:.02em;text-transform:uppercase}.ds-brand small{font:var(--t-sm) var(--f-text);color:var(--navy-ink)}.ds-tools{display:flex;gap:10px;align-items:center}.ds-chip-demo{font:500 var(--t-sm) var(--f-caps);letter-spacing:.04em;padding:3px 10px;border-radius:var(--radius);background:var(--amber-bg);color:var(--amber)}.ds-lang{display:inline-flex;border:1px solid var(--navy-ink);border-radius:var(--radius);overflow:hidden}.ds-lang button{font:600 var(--t-sm)/1 var(--f-caps);letter-spacing:.06em;color:var(--navy-ink);background:transparent;border:0;padding:6px 12px;min-width:40px;cursor:pointer}.ds-lang button[aria-pressed=true]{background:#fff;color:var(--navy)}.ds-lang button:hover:not([aria-pressed=true]){color:#fff}.ds-lang button:focus-visible{outline:2px solid #fff;outline-offset:2px}"
+    },
+    {
+      "name": "Status Chip",
+      "kind": "chip",
+      "refersTo": "chip-model",
+      "description": "Model status chip on the navy bar: mono text with a live dot (amber when fallback).",
+      "html": "<span class=\"ds-chip-model\"><i></i>Démo hors ligne</span>",
+      "css": ".ds-chip-model{display:inline-flex;align-items:center;gap:6px;font:500 var(--t-sm) var(--f-num);padding:3px 10px;border-radius:var(--radius);background:var(--navy-2);color:var(--navy-ink)}.ds-chip-model i{width:8px;height:8px;border-radius:50%;background:#39c07a}"
+    },
+    {
+      "name": "Lot Coupon",
+      "kind": "card",
+      "refersTo": "coupon",
+      "description": "Signature: a lot as a punched coupon with serial block, status tab, huge zone code, tabbed carbon figures, and a rubber stamp when sold or reserved.",
+      "html": "<article class=\"ds-coupon\"><div class=\"ds-chead\"><span class=\"ds-serial\">L-KAI-003</span><span class=\"ds-zone\">Kairouan Sud</span><span class=\"ds-status\">Vendu</span></div><div class=\"ds-cbody\"><span class=\"ds-code\">KAI</span><span class=\"ds-place\">Kairouan</span><div class=\"ds-figs\"><div class=\"ds-fig\"><span>Surface</span><b>2 000 m²</b></div><div class=\"ds-fig\"><span>Prix</span><b>90 000 DT</b></div><div class=\"ds-fig\"><span>Prix / m²</span><b>45 DT</b></div></div></div><span class=\"ds-stamp\">Vendu</span></article>",
+      "css": ".ds-coupon{position:relative;width:360px;background:var(--coupon);border:1.5px solid var(--navy);border-radius:var(--radius)}.ds-coupon::before,.ds-coupon::after{content:'';position:absolute;top:50%;width:14px;height:14px;background:var(--stock);border:1.5px solid var(--navy);border-radius:50%;transform:translateY(-50%)}.ds-coupon::before{left:-8px;clip-path:inset(0 0 0 50%)}.ds-coupon::after{right:-8px;clip-path:inset(0 50% 0 0)}.ds-chead{display:flex;border-bottom:1px solid var(--navy);font:600 var(--t-xs)/1 var(--f-caps);letter-spacing:.1em;text-transform:uppercase}.ds-serial{background:var(--navy);color:#fff;padding:8px 12px;font-family:var(--f-num);letter-spacing:.02em}.ds-zone{flex:1;padding:8px 12px;color:var(--navy)}.ds-status{padding:8px 12px;color:#fff;background:var(--red)}.ds-cbody{display:grid;grid-template-columns:auto 1fr;gap:10px 14px;padding:12px 16px 14px;align-items:end}.ds-code{font:700 var(--t-code)/.8 var(--f-caps);color:var(--navy);letter-spacing:.02em}.ds-place{font:var(--t-sm)/1.3 var(--f-text);color:var(--ink-2)}.ds-figs{grid-column:1/-1;display:grid;grid-template-columns:1fr 1.3fr 1fr;gap:8px}.ds-fig{display:flex;flex-direction:column;align-items:flex-start}.ds-fig span{font:600 .6875rem/1 var(--f-caps);letter-spacing:.1em;text-transform:uppercase;color:var(--navy);background:var(--coupon);border:1px solid var(--navy);border-bottom:0;border-radius:var(--radius) var(--radius) 0 0;padding:4px 8px 3px;position:relative;top:1px}.ds-fig b{align-self:stretch;font:600 var(--t-md)/1.3 var(--f-num);color:var(--carbon);border:1px solid var(--navy);border-radius:0 var(--radius) var(--radius) var(--radius);padding:5px 8px;white-space:nowrap}.ds-stamp{position:absolute;right:18px;top:46px;font:700 1.375rem/1 var(--f-caps);letter-spacing:.12em;text-transform:uppercase;color:var(--red);border:2.5px solid var(--red);border-radius:4px;padding:3px 10px;transform:rotate(-9deg);opacity:.85;mix-blend-mode:multiply;-webkit-mask-image:var(--ink-mask);mask-image:var(--ink-mask);-webkit-mask-size:160px;mask-size:160px}"
+    },
+    {
+      "name": "Carbon-Copy Request",
+      "kind": "custom",
+      "refersTo": "carbon-copy",
+      "description": "Signature: the request draft as lavender carbon paper with a perforated stub carrying Confirm.",
+      "html": "<div class=\"ds-copy\"><div class=\"ds-copy-head\"><span>Demande de réservation</span><span class=\"ds-copy-serial\">DRAFT-0001</span></div><dl class=\"ds-copy-fields\"><div><dt>Lot</dt><dd>L-KAI-001</dd></div><div><dt>Activité</dt><dd>Textile</dd></div></dl><div class=\"ds-perf\"></div><div class=\"ds-stub\"><p>L'assistant ne peut pas envoyer la demande ; vous seul le pouvez.</p><button>Confirmer et envoyer</button></div></div>",
+      "css": ".ds-copy{width:320px;background:var(--carbon-copy);border:1.5px solid var(--carbon);border-radius:var(--radius);color:var(--carbon)}.ds-copy-head{display:flex;justify-content:space-between;padding:10px 14px;border-bottom:1px dashed var(--carbon);font:600 var(--t-xs)/1 var(--f-caps);letter-spacing:.1em;text-transform:uppercase}.ds-copy-serial{font:var(--t-sm) var(--f-num);letter-spacing:0}.ds-copy-fields{margin:0;padding:12px 14px;display:grid;grid-template-columns:1fr 1fr;gap:10px 16px}.ds-copy-fields dt{font:500 .6875rem/1.2 var(--f-caps);letter-spacing:.1em;text-transform:uppercase;opacity:.8}.ds-copy-fields dd{margin:2px 0 0;font:600 var(--t-lg)/1.25 var(--f-num)}.ds-perf{height:0;border-top:2px dashed var(--carbon);margin:0 10px;position:relative}.ds-perf::before,.ds-perf::after{content:'';position:absolute;top:-9px;width:16px;height:16px;border-radius:50%;background:var(--stock);border:1.5px solid var(--carbon)}.ds-perf::before{left:-19px;clip-path:inset(0 0 0 50%)}.ds-perf::after{right:-19px;clip-path:inset(0 50% 0 0)}.ds-stub{padding:12px 14px 14px;display:grid;gap:10px}.ds-stub p{margin:0;font:var(--t-sm) var(--f-text);color:#3c2a66}.ds-stub button{font:600 var(--t-md)/1 var(--f-caps);letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--red);border:0;border-radius:var(--radius);padding:13px 16px;cursor:pointer}.ds-stub button:hover{background:var(--red-ink)}.ds-stub button:focus-visible{outline:2px solid var(--navy);outline-offset:2px}"
+    },
+    {
+      "name": "Agent Slip with Lookup",
+      "kind": "custom",
+      "refersTo": "",
+      "description": "An answer as a navy-ruled tabbed slip, with one tabbed carbon row per lookup at its foot.",
+      "html": "<div class=\"ds-msg\"><span class=\"ds-tab\">Assistant</span><div class=\"ds-slip\"><p>Deux lots correspondent à votre recherche.</p><div class=\"ds-lookups\"><span class=\"ds-ltab\">Recherche de lots</span><div class=\"ds-lrow\"><b>2 lots trouvés</b><code>search_lots(zone=\"KAI\")</code></div></div></div></div>",
+      "css": ".ds-msg{color:var(--navy);width:360px}.ds-tab{display:inline-block;font:600 var(--t-xs)/1 var(--f-caps);letter-spacing:.1em;text-transform:uppercase;padding:5px 10px 4px;border:1.5px solid currentColor;border-bottom:0;border-radius:var(--radius) var(--radius) 0 0;position:relative;top:1.5px;background:var(--stock)}.ds-slip{background:var(--coupon);border:1.5px solid var(--navy);border-radius:0 var(--radius) var(--radius) var(--radius);color:var(--ink)}.ds-slip p{margin:0;padding:12px 16px;font:var(--t-md)/1.5 var(--f-text)}.ds-lookups{border-top:1px dashed var(--rule);padding:9px 16px 12px;display:flex;flex-direction:column;align-items:flex-start}.ds-ltab{font:600 .6875rem/1 var(--f-caps);letter-spacing:.1em;text-transform:uppercase;color:var(--carbon);background:var(--coupon);border:1px solid var(--carbon);border-bottom:0;border-radius:var(--radius) var(--radius) 0 0;padding:4px 8px 3px;position:relative;top:1px}.ds-lrow{align-self:stretch;display:grid;gap:2px;padding:7px 10px;background:#f6f2fc;border:1px solid var(--carbon);border-radius:0 var(--radius) var(--radius) var(--radius);font:var(--t-sm) var(--f-text)}.ds-lrow b{color:var(--navy);font-weight:500}.ds-lrow code{font:.75rem var(--f-num);color:var(--ink-2)}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Ticket Wallet",
+    "overview": "A land request is kept the way a jet-age carrier kept a journey: in a wallet of printed coupons. Each lot the agent finds is a coupon with a serial block, a zone code set huge in condensed caps, and tabbed figure cells filled in by the system in carbon purple. The request is a lavender carbon copy with a perforated stub; confirming presses a bilingual rubber stamp onto it and the stub tears away to show the tracking number. The shell is carrier navy with a jet-red rule; everything inside sits on pale stock paper.\n\nThe interface is dense and operational: three working panes at once, every figure in a monospace numeral, every label in tight airline caps. Depth comes from ruled edges and tabbed heads, not from shadow. Colour carries meaning, not decoration: navy is the carrier's voice, purple is whatever the system filled in, red is the one act only the investor can perform, green/purple/red repeat as lot status.\n\nArabic is a first-class reading of the same wallet, not a mirror afterthought: the caps stack falls through to Changa for Arabic glyphs, letter-spacing drops to zero, tabs and punched corners flip with `dir=\"rtl\"`, and the stamp is bilingual.",
+    "keyCharacteristics": [
+      "Carrier navy shell with a 4px jet-red rule under the top bar.",
+      "Coupons: white, 1.5px navy rule, punched half-circles at mid-height, 72px zone code.",
+      "Tabbed field heads: a small caps tab sits on top of a ruled cell, sharing its border.",
+      "Carbon purple for every system-filled figure, lavender for the draft copy.",
+      "Ink-speckled rubber stamps for states (VENDU, RÉSERVÉ, CONFIRMÉE / مؤكّدة).",
+      "Flat colour; edges are ruled, not shadowed."
+    ],
+    "rules": [
+      {
+        "name": "The One Commitment Rule",
+        "body": "Jet red fills exactly one button on screen: Confirm. Elsewhere red is a rule, a mark, a stamp or a status, never a second filled call to action.",
+        "section": "colors"
+      },
+      {
+        "name": "The Carbon Rule",
+        "body": "Anything the system filled in (figures, lookups, the draft) is carbon purple; anything printed by the carrier (labels, codes, frames) is navy. If you cannot say who wrote a value, you have not decided its colour.",
+        "section": "colors"
+      },
+      {
+        "name": "The Zero-Tracking Arabic Rule",
+        "body": "Every letter-spaced caps style resets to `letter-spacing: 0` under `dir=\"rtl\"`; Arabic is never tracked.",
+        "section": "typography"
+      },
+      {
+        "name": "The Numerals Are Carbon Rule",
+        "body": "Figures, serials and codes always set in Red Hat Mono; prose never does.",
+        "section": "typography"
+      },
+      {
+        "name": "The Ruled-Not-Shadowed Rule",
+        "body": "Separate surfaces with a rule, a tab or a perforation; never with a drop shadow.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do frame every surface with a ruled edge (1.5px navy for coupons and slips, 1px rule hairline for dividers) and keep corners at 3px.",
+      "Do set every system-filled number in Red Hat Mono, carbon purple.",
+      "Do head fields with a tab that shares the cell's border, and flip the squared corner in RTL.",
+      "Do reserve the filled jet-red button for the one action only the investor can take.",
+      "Do drop letter-spacing to 0 on caps styles under `dir=\"rtl\"`.",
+      "Do play motion once, on new data only, and never on re-render."
+    ],
+    "donts": [
+      "Don't add drop shadows or gradients to surfaces; the only patterned fill is the hatched sold plot, the only shadows are the matched-plot ring and the listening pulse.",
+      "Don't add a second filled red button beside Confirm.",
+      "Don't use carbon purple for carrier-printed labels or navy for system-filled values.",
+      "Don't use rounded cards or chat bubbles; turns are ruled slips with tabs.",
+      "Don't present the product as an official AFI service or use AFI's logo; keep the amber demo-data notice wherever data is invented."
+    ]
+  }
+}
