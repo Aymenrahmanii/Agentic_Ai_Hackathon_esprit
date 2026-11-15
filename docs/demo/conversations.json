@@ -1,0 +1,132 @@
+{
+  "model": "gemini-3.5-flash-lite",
+  "scenarios": [
+    {
+      "id": "derja-booking",
+      "title": "Tunisian Derja: find a lot, book it, confirm",
+      "turns": [
+        {
+          "user": "نحب نحل معمل نسيج في القيروان، شنوة الأراضي الموجودة؟",
+          "tool_calls": [
+            {
+              "name": "search_lots",
+              "input": {
+                "sector": "textile",
+                "governorate": "Kairouan"
+              },
+              "is_error": false
+            }
+          ],
+          "reply": "لقيت زوج مقاسم في ولاية القيروان تناسب قطاع النسيج. المقسم الأول برمز L-KAI-001 مساحتو ألفين متر مربع وبثمن تسعين ألف دينار. والمقسم الثاني برمز L-KAI-002 مساحتو خمسة آلاف ومائتين متر مربع وبثمن مائتين وأربعة وثلاثين ألف دينار.",
+          "latency_ms": 1885,
+          "pending_draft": null
+        },
+        {
+          "user": "نحب نحجز L-KAI-001، إسمي سامي والنشاط متاعي نسيج",
+          "tool_calls": [
+            {
+              "name": "prefill_request",
+              "input": {
+                "lot_id": "L-KAI-001",
+                "applicant_name": "سامي",
+                "activity": "نسيج"
+              },
+              "is_error": false
+            }
+          ],
+          "reply": "حضرتلك مطلب حجز بالمرجع DRAFT-0001 للمقسم برمز L-KAI-001 باسم سامي للنشاط نسيج. يرجى مراجعة التفاصيل وتأكيد الطلب على الشاشة.",
+          "latency_ms": 1934,
+          "pending_draft": "DRAFT-0001",
+          "confirmed": "DEMO-0001"
+        }
+      ]
+    },
+    {
+      "id": "multilingual",
+      "title": "Same agent, three languages",
+      "turns": [
+        {
+          "user": "n7eb nechri ardh sina3iya fi sfax, chnowa mawjoud?",
+          "tool_calls": [
+            {
+              "name": "search_lots",
+              "input": {
+                "governorate": "Sfax"
+              },
+              "is_error": false
+            }
+          ],
+          "reply": "Famma lot L-SFX-001 fi Sfax Nord b meseha 1500 metrou marba3 w soumo 180 alf dinar. Famma zada lot L-SFX-002 b 8000 metrou marba3 w soumo 880 alf dinar. Ken t7eb tnajjem t9olli chnowa 5demtek bech nchouflok el ardh elli twalmek.",
+          "latency_ms": 1940,
+          "pending_draft": null
+        },
+        {
+          "user": "Quels documents faut-il pour réserver un lot ?",
+          "tool_calls": [
+            {
+              "name": "get_procedure",
+              "input": {
+                "procedure_id": "reservation_lot"
+              },
+              "is_error": false
+            }
+          ],
+          "reply": "Pour réserver un lot, il faut fournir un formulaire de demande sur modèle AFI, une copie de la pièce d'identité du promoteur, ainsi que les statuts de la société ou un extrait du registre national des entreprises. Il est également nécessaire de joindre une étude sommaire du projet.",
+          "latency_ms": 1919,
+          "pending_draft": null
+        },
+        {
+          "user": "Is there any land for a food processing plant under 200,000 dinars?",
+          "tool_calls": [
+            {
+              "name": "search_lots",
+              "input": {
+                "sector": "agroalimentaire",
+                "max_price_tnd": 200000
+              },
+              "is_error": false
+            }
+          ],
+          "reply": "I found two available lots for a food processing plant under 200,000 dinars. One is in Sidi Bouzid Ouest with an area of 4,000 square meters for 100,000 dinars. The other is in Sfax Nord with an area of 1,500 square meters for 180,000 dinars. Would you like to reserve one of these lots?",
+          "latency_ms": 2154,
+          "pending_draft": null
+        }
+      ]
+    },
+    {
+      "id": "guardrails",
+      "title": "Guardrails: missing details, out of scope, human hand-over",
+      "turns": [
+        {
+          "user": "Réservez-moi le lot L-KAI-002.",
+          "tool_calls": [],
+          "reply": "Pour réserver le lot L-KAI-002, j'ai besoin de votre nom complet et de la nature de votre activité. Veuillez me les communiquer pour que je puisse préparer votre demande.",
+          "latency_ms": 681,
+          "pending_draft": null
+        },
+        {
+          "user": "What's the weather going to be like in Tunis tomorrow?",
+          "tool_calls": [],
+          "reply": "I can only help you with AFI industrial land services, such as finding industrial lots and checking reservation procedures.",
+          "latency_ms": 652,
+          "pending_draft": null
+        },
+        {
+          "user": "I want to talk to a human agent.",
+          "tool_calls": [
+            {
+              "name": "escalate_to_human",
+              "input": {
+                "reason": "The user requested to speak with a human agent."
+              },
+              "is_error": false
+            }
+          ],
+          "reply": "I have transferred your request to a human AFI agent with reference TICKET-0001. Someone will be in touch with you shortly.",
+          "latency_ms": 1953,
+          "pending_draft": null
+        }
+      ]
+    }
+  ]
+}
