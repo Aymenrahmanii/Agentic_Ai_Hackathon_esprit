@@ -18,6 +18,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import arabic_reshaper
+from architecture_gif import Style, architecture_frames
 from bidi.algorithm import get_display
 from PIL import Image, ImageDraw, ImageFont
 
@@ -308,7 +309,20 @@ def _latest_gemini_results() -> Path:
     return runs[-1]
 
 
+def save_architecture_gif() -> None:
+    style = Style(
+        colors=COLORS,
+        font=FONT,
+        font_small=_font(_UI_FONTS, 13),
+        font_bold=_font(_UI_BOLD_FONTS, 16),
+        font_caption=_font(_UI_FONTS, 18),
+        shape_text=shape,
+    )
+    save_gif(architecture_frames(style), DEMO_DIR / "architecture.gif")
+
+
 def main(argv: list[str]) -> None:
+    save_architecture_gif()
     conversations = json.loads((DEMO_DIR / "conversations.json").read_text(encoding="utf-8"))
     model = conversations["model"]
     for scenario in conversations["scenarios"]:

@@ -48,17 +48,26 @@ All animations replay **real model output**, recorded through the API with
 
 ## How it works
 
+<p align="center">
+  <img src="docs/demo/architecture.gif" alt="Animated architecture: a Derja question travels from the investor to the agent loop, to Gemini, back as a search_lots tool call, through the tools to the knowledge store, and back as a spoken-style reply; then the Groq fallback when Gemini is down, a draft created in the back office, and the user's Confirm button submitting it" width="820">
+</p>
+
+<details>
+<summary>Text version of the diagram</summary>
+
 ```mermaid
 flowchart LR
     U([Investor<br/>Derja · FR · AR · EN]) -->|POST /chat| A[Agent loop]
-    A -->|language hint<br/>+ system prompt| L{{LLM<br/>Gemini 3.5 Flash-Lite}}
-    L -.->|rate limit / outage| G{{Fallback<br/>Groq gpt-oss-120b}}
-    L -->|tool calls| T[Tools]
+    A -->|conversation + tools| L{{Gemini 3.5 Flash-Lite}}
+    L -.->|rate limit / outage| G{{Groq gpt-oss-120b<br/>fallback}}
+    A -->|tool calls| T[Tools]
     T --> S[(Knowledge store<br/>zones · lots · procedures)]
-    T --> B[Back office mock<br/>drafts · dossiers · tickets]
-    A -->|reply cleaned<br/>for speech| U
+    T --> B[Back office<br/>drafts · requests · tickets]
+    A -->|reply cleaned for speech| U
     U -->|Confirm button<br/>POST /requests/id/confirm| B
 ```
+
+</details>
 
 - **Agent loop** (`agent.py`): sends the conversation and tool definitions to the model, runs
   the tools it asks for, and repeats until it answers, with a cap of 6 steps per turn. Failed
