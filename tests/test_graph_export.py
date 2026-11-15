@@ -23,6 +23,8 @@ def test_seed_export_covers_every_node_and_relationship() -> None:
         assert f"MERGE (z:Zone {{id: '{zone.id}'}})" in cypher
     for lot in seed.lots:
         assert f"MERGE (l:Lot {{id: '{lot.id}'}})" in cypher
-    for relationship in ("LOCATED_IN", "TARGETS", "HAS_INFRASTRUCTURE", "PART_OF", "REQUIRES"):
+    for relationship in ("LOCATED_IN", "TARGETS", "HAS_INFRASTRUCTURE", "PART_OF"):
         assert f"[:{relationship}]" in cypher
+    assert "[r:REQUIRES]" in cypher and "r.position = 0" in cypher
+    assert "MERGE (m:Dataset {key: 'seed'}) SET m.synthetic = true" in cypher
     assert all(line.endswith(";") for line in cypher.strip().splitlines())

@@ -167,13 +167,13 @@ def test_full_turn_round_trips_through_the_adapter(ctx: ToolContext) -> None:
             completion(
                 tool_call_message("c1", "search_lots", '{"governorate": "Kairouan"}'), "tool_calls"
             ),
-            completion({"content": "Deux lots sont disponibles."}, "stop"),
+            completion({"content": "Deux lots : L-KAI-001 et L-KAI-002."}, "stop"),
         ]
     )
 
     reply = Agent(compat_llm(client), ctx).respond([], "Des lots à Kairouan ?")
 
-    assert reply.text == "Deux lots sont disponibles."
+    assert reply.text == "Deux lots : L-KAI-001 et L-KAI-002."
     assert reply.tool_records[0].output["count"] == 2
     second_request = client.requests[1]["messages"]
     assert [m["role"] for m in second_request] == ["system", "user", "assistant", "tool"]
@@ -204,7 +204,10 @@ def test_gemini_thought_signature_is_sent_back_with_the_tool_call(ctx: ToolConte
     first = tool_call_message("c1", "search_lots", '{"governorate": "Sfax"}')
     first["tool_calls"][0]["extra_content"] = signature
     client = FakeOpenAIClient(
-        [completion(first, "tool_calls"), completion({"content": "Deux lots."}, "stop")]
+        [
+            completion(first, "tool_calls"),
+            completion({"content": "Deux lots : L-SFX-001 et L-SFX-002."}, "stop"),
+        ]
     )
 
     Agent(compat_llm(client), ctx).respond([], "Lots à Sfax ?")

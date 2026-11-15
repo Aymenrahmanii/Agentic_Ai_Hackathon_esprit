@@ -17,13 +17,20 @@ _IDS_AND_UNITS = re.compile(r"\b[A-Z0-9][A-Z0-9-]*\d[A-Z0-9-]*\b|\bAFI\b|\bm²|\
 # Arabizi writes Arabic sounds with digits inside words: n7eb, 3andi, sina3iya, 9irwen.
 _ARABIZI_DIGIT = re.compile(r"[a-z][2-9]|[2-9][a-z]")
 
+# Common function words plus the domain words investors use. Words spelled the same in both
+# languages (zone, lots, site, transport...) are left out on purpose.
 _FRENCH_WORDS = frozenset(
-    "le la les des du une est sont vous votre vos pour avec dans sur je nous pas "
-    "aucun aucune été souhaitez quels quelle comment où faut".split()
+    "le la les des du de un une et ou au aux est sont vous votre vos pour avec dans sur je "
+    "nous pas mon ma mes moi veux voudrais aucun aucune été souhaitez quel quels quelle "
+    "quelles comment où faut combien terrain terrains disponible disponibles prix comparer "
+    "entre réserver réservez merci bonjour avez il elle ce cette ces qui que industriel "
+    "industrielle usine".split()
 )
 _ENGLISH_WORDS = frozenset(
-    "the a an is are you your for with in on i we not no have has been would what "
-    "where how want".split()
+    "the a an and or of to from at by is are you your for with in on i we not no have has "
+    "been would what where how want can could please show me my tell which there any this "
+    "that these those it do does give list find need book reserve available industrial price "
+    "prices cost compare between plant land plot plots hello thanks".split()
 )
 _WORD = re.compile(r"[a-zà-ÿ']+")
 
@@ -81,3 +88,11 @@ _REPLY_INSTRUCTIONS: dict[Language, str] = {
 def reply_language_instruction(user_text: str) -> str | None:
     language = detect_language(user_text)
     return _REPLY_INSTRUCTIONS[language] if language else None
+
+
+_MIXED_SCRIPT_WORD = re.compile(f"[A-Za-zÀ-ÿ][{ARABIC_LETTERS}]|[{ARABIC_LETTERS}][A-Za-zÀ-ÿ]")
+
+
+def has_mixed_script_word(text: str) -> bool:
+    """Arabic and Latin letters inside one word, e.g. "Nجم", which TTS cannot read."""
+    return bool(_MIXED_SCRIPT_WORD.search(text))

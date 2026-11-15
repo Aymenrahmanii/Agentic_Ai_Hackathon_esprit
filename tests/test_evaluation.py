@@ -69,8 +69,8 @@ def test_run_cases_scores_tool_choice_and_arguments(ctx: ToolContext) -> None:
         ]
     )
 
-    def ask(question: str) -> AgentReply:
-        return Agent(ScriptedLLM(next(scripts)), ctx).respond([], question)
+    def ask(case: GoldenCase) -> AgentReply:
+        return Agent(ScriptedLLM(next(scripts)), ctx).respond([], case.question)
 
     results = run_cases(cases, ask)
 
@@ -84,24 +84,65 @@ def test_run_cases_scores_tool_choice_and_arguments(ctx: ToolContext) -> None:
     assert summary["accuracy_by_lang"] == {"fr": 0.5, "en": 0.0}
 
 
-def test_no_tool_cases_fail_only_when_a_forbidden_tool_is_called(ctx: ToolContext) -> None:
+def test_no_tool_cases_fail_when_a_forbidden_tool_succeeds(ctx: ToolContext) -> None:
     case = GoldenCase(
-        id="missing-name",
+        id="no-booking",
         lang="fr",
-        question="Réservez-moi le lot L-KAI-002.",
+        question="Je suis Karim, textile, lot L-KAI-002, mais je réfléchis encore.",
         expected_tool=None,
         forbidden_tools=["prefill_request"],
     )
-    prefill = ToolCall(
-        "t", "prefill_request", {"lot_id": "L-KAI-002", "applicant_name": "X", "activity": "Y"}
+    booking = ToolCall(
+        "t",
+        "prefill_request",
+        {
+            "lot_id": "L-KAI-002",
+            "applicant_name": "Karim",
+            "applicant_name_quote": "Karim",
+            "activity": "textile",
+            "activity_quote": "textile",
+        },
     )
-    asked = Agent(ScriptedLLM([scripted_turn("Quel est votre nom ?")]), ctx).respond([], "?")
-    invented = Agent(
-        ScriptedLLM([scripted_turn(tool_calls=[prefill]), scripted_turn("ok")]), ctx
-    ).respond([], "?")
+    asked = Agent(ScriptedLLM([scripted_turn("D'accord.")]), ctx).respond([], case.question)
+    booked = Agent(
+        ScriptedLLM([scripted_turn(tool_calls=[booking]), scripted_turn("ok")]), ctx
+    ).respond([], case.question)
 
     assert score_case(case, asked).passed
-    assert not score_case(case, invented).passed
+    assert not booked.tool_records[0].is_error
+    assert not score_case(case, booked).passed
+
+
+def test_a_forbidden_call_the_code_blocked_passes_but_is_counted(ctx: ToolContext) -> None:
+    case = GoldenCase(
+        id="missing-activity",
+        lang="en",
+        question="Reserve lot L-SFX-001, I'm Leila.",
+        expected_tool=None,
+        forbidden_tools=["prefill_request"],
+    )
+    attempt = ToolCall(
+        "t",
+        "prefill_request",
+        {
+            "lot_id": "L-SFX-001",
+            "applicant_name": "Leila",
+            "applicant_name_quote": "Leila",
+            "activity": "Not specified",
+            "activity_quote": "Not specified",
+        },
+    )
+    llm = ScriptedLLM(
+        [scripted_turn(tool_calls=[attempt]), scripted_turn("What will you produce?")]
+    )
+    reply = Agent(llm, ctx).respond([], case.question)
+
+    result = score_case(case, reply)
+
+    assert reply.tool_records[0].is_error
+    assert result.passed
+    assert result.blocked == ["prefill_request"]
+    assert summarize([result])["blocked_attempts"] == 1
 
 
 def test_forbidden_tools_also_apply_when_a_tool_is_expected(ctx: ToolContext) -> None:
@@ -126,7 +167,7 @@ def test_forbidden_tools_also_apply_when_a_tool_is_expected(ctx: ToolContext) ->
 def test_run_cases_records_failures_instead_of_stopping() -> None:
     cases = [GoldenCase(id="boom", lang="fr", question="?", expected_tool="search_lots")]
 
-    def ask(question: str) -> AgentReply:
+    def ask(case: GoldenCase) -> AgentReply:
         raise RuntimeError("network down")
 
     results = run_cases(cases, ask)

@@ -77,6 +77,7 @@ class AnthropicLLM:
     def __init__(self, *, model: str, effort: str, max_tokens: int | None) -> None:
         self._client = anthropic.Anthropic()
         self._model = model
+        self.last_model = model
         self._effort = effort
         self._max_tokens = max_tokens or _ANTHROPIC_DEFAULT_MAX_TOKENS
 
@@ -209,6 +210,7 @@ class OpenAICompatLLM:
     ) -> None:
         self._client = client or openai.OpenAI(base_url=base_url, api_key=api_key)
         self._model = model
+        self.last_model = model
         self._max_tokens = max_tokens
         # Gemini's tool-call signatures must go back to Gemini, and only there: a transcript
         # started on Gemini may finish on the backup provider.
@@ -233,8 +235,9 @@ class OpenAICompatLLM:
             "messages": to_openai_messages(
                 system, messages, send_extra_content=self._send_extra_content
             ),
-            "tools": to_openai_tools(tools),
         }
+        if tools:  # some providers reject an empty tool list
+            request["tools"] = to_openai_tools(tools)
         if self._max_tokens is not None:
             request["max_completion_tokens"] = self._max_tokens
         try:
@@ -288,6 +291,7 @@ class FallbackLLM:
         self._cooldown_s = cooldown_s
         self._clock = clock
         self._backup_until = float("-inf")
+        self.last_model: str | None = getattr(primary, "last_model", None)
 
     @property
     def using_backup(self) -> bool:
@@ -298,15 +302,23 @@ class FallbackLLM:
     ) -> LLMTurn:
         if not self.using_backup:
             try:
-                return self._primary.complete(system=system, messages=messages, tools=tools)
+                turn = self._primary.complete(system=system, messages=messages, tools=tools)
+                self.last_model = getattr(self._primary, "last_model", None)
+                return turn
             except LLMError as exc:
                 if not exc.retryable:
                     raise
                 self._backup_until = self._clock() + self._cooldown_s
-        return self._backup.complete(system=system, messages=messages, tools=tools)
+        turn = self._backup.complete(system=system, messages=messages, tools=tools)
+        self.last_model = getattr(self._backup, "last_model", None)
+        return turn
 
 
 def _build_single(settings: Settings) -> LLM:
+    if settings.provider == "replay":
+        from afi_agent.replay import ReplayLLM  # replay builds on this module
+
+        return ReplayLLM.from_file(settings.replay_path)
     if settings.provider == "anthropic":
         return AnthropicLLM(
             model=settings.model, effort=settings.effort, max_tokens=settings.max_tokens
@@ -327,7 +339,7 @@ def _build_single(settings: Settings) -> LLM:
         )
     raise LLMError(
         f"Unknown AFI_PROVIDER '{settings.provider}' "
-        "(use gemini, groq, openai_compat or anthropic)",
+        "(use gemini, groq, replay, openai_compat or anthropic)",
         retryable=False,
     )
 
@@ -358,6 +370,7 @@ class ScriptedLLM:
     """Replays fixed turns. For tests, and for a no-network demo fallback."""
 
     turns: list[LLMTurn]
+    last_model: str = field(default="scripted", init=False)
     call_count: int = field(default=0, init=False)
     systems: list[str] = field(default_factory=list, init=False)
 

@@ -6,8 +6,35 @@ from afi_agent.llm import ScriptedLLM, ToolCall, scripted_turn
 PREFILL = ToolCall(
     "t1",
     "prefill_request",
-    {"lot_id": "L-KAI-001", "applicant_name": "Test Investor", "activity": "textile"},
+    {
+        "lot_id": "L-KAI-001",
+        "applicant_name": "Test Investor",
+        "applicant_name_quote": "Test Investor",
+        "activity": "textile",
+        "activity_quote": "textile",
+    },
 )
+
+
+def test_interface_is_served_and_always_revalidated() -> None:
+    client = TestClient(create_app(llm=ScriptedLLM([])))
+
+    page = client.get("/")
+    script = client.get("/static/app.js")
+
+    assert page.status_code == 200 and "Assistant foncier AFI" in page.text
+    assert script.status_code == 200
+    assert page.headers["cache-control"] == script.headers["cache-control"] == "no-cache"
+
+
+def test_map_lists_every_zone_with_its_lots() -> None:
+    client = TestClient(create_app(llm=ScriptedLLM([])))
+
+    zones = client.get("/map").json()["zones"]
+
+    assert {z["id"] for z in zones} == {"ZI-KAI-01", "ZI-SFX-01", "ZI-BEJ-01", "ZI-SBZ-01"}
+    kairouan = next(z for z in zones if z["id"] == "ZI-KAI-01")
+    assert kairouan["available"] == 2 and len(kairouan["lots"]) == 3
 
 
 def test_health_needs_no_llm() -> None:
@@ -34,7 +61,8 @@ def test_request_is_submitted_only_by_the_confirm_endpoint() -> None:
     )
     client = TestClient(create_app(llm=llm))
 
-    chat = client.post("/chat", json={"message": "Réservez le lot L-KAI-001"}).json()
+    message = "Réservez le lot L-KAI-001 pour Test Investor, activité textile"
+    chat = client.post("/chat", json={"message": message}).json()
     draft = chat["pending_draft"]
     assert draft["status"] == "awaiting_confirmation"
     assert chat["tool_calls"][0]["name"] == "prefill_request"

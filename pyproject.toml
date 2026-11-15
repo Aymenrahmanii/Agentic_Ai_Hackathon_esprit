@@ -12,6 +12,11 @@ dependencies = [
     "uvicorn",
 ]
 
+[project.optional-dependencies]
+graph = [
+    "neo4j>=6.4.1",
+]
+
 [dependency-groups]
 dev = [
     "httpx",

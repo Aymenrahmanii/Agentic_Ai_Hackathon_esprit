@@ -1,10 +1,15 @@
 import json
+import re
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any
 
-from afi_agent.language import reply_language_instruction
-from afi_agent.llm import LLM, LLMTurn
+from afi_agent.language import (
+    detect_language,
+    has_mixed_script_word,
+    reply_language_instruction,
+)
+from afi_agent.llm import LLM, LLMError, LLMTurn
 from afi_agent.speech import to_speech_text
 from afi_agent.tools import ToolContext, execute_tool, tool_schemas
 
@@ -49,6 +54,46 @@ to at most four short sentences. If there are several lots, mention at most thre
 one sentence. Give prices in dinars.
 """
 
+REWRITE_PROMPT = """\
+Rewrite the text you are given, keeping its language, meaning and length. No word may mix \
+Arabic and Latin letters: write each foreign term fully in the script of the surrounding \
+sentence, translating it if needed. Ids such as L-KAI-001 or DRAFT-0001 stay exactly as they \
+are, in Latin characters, never spelled out in words. Reply with the rewritten text only.
+"""
+
+# Ids a reply must repeat to the user when a tool returned them.
+REFERENCE_KEYS = ("ticket_id", "draft_id", "tracking_number")
+
+GROUNDING_RETRY = (
+    "\nYour previous answer gave lot ids or prices without looking them up. Call the tools "
+    "to get the facts before answering; never answer from memory.\n"
+)
+
+_LOT_ID = re.compile(r"\bL-[A-Z]{3}-\d{3}\b")
+
+# Matches the system prompt's "mention at most three" lots.
+MAX_LOTS_MENTIONED = 3
+
+# Words that only appear when a reply quotes prices or areas (French, English, Arabic, Arabizi).
+_FACT_WORDS = re.compile(
+    r"\b(dinars?|DT|TND|m²|m2|mètres? carrés?|square met(?:re|er)s?|hectares?|"
+    r"metr\w*)\b|دينار|متر مربع|هكتار",
+    re.IGNORECASE,
+)
+# A quoted amount: digits, or a number written as a word ("تسعين ألف", "alf", "mille").
+_AMOUNT = re.compile(
+    r"\d|ألف|آلاف|مائة|مية|\b(alf|mia|mille|cent|thousand|hundred)\b", re.IGNORECASE
+)
+
+# Shown instead of a reply that still states unverified facts after the retry.
+_UNVERIFIED_REPLY = {
+    "arabic_script": "خليني نثبت في المعطيات قبل ما نجاوبك. تنجم تعاود السؤال من فضلك؟",
+    "arabizi": "Khalini nthabet fil ma3loumet 9bal ma njewbek. Tnajjem t3awed el so2el?",
+    "fr": "Je préfère vérifier ces informations avant de répondre. Pouvez-vous reposer "
+    "la question ?",
+    "en": "I'd rather check that information before answering. Could you ask again?",
+}
+
 _REFUSAL_REPLY = "Désolé, je ne peux pas répondre à cette demande."
 _MAX_STEPS_REPLY = "Désolé, je n'ai pas pu terminer cette demande. Pouvez-vous reformuler ?"
 
@@ -85,27 +130,38 @@ class Agent:
         messages.append({"role": "user", "content": user_text})
         records: list[ToolRecord] = []
         tools = tool_schemas(self._ctx.store)
+        ctx = replace(self._ctx, user_messages=_user_texts(messages))
         # Models drift to the language of the tool data (French); a hint per turn holds better
         # than the general rule in the system prompt.
         hint = reply_language_instruction(user_text)
         system = f"{SYSTEM_PROMPT}\n{hint}\n" if hint else SYSTEM_PROMPT
-        text, stop_reason = _MAX_STEPS_REPLY, "max_steps"
 
         try:
-            for _ in range(self._max_steps):
-                turn = self._llm.complete(system=system, messages=messages, tools=tools)
-                if turn.stop_reason == "refusal":
-                    del messages[turn_start:]
-                    text, stop_reason = _REFUSAL_REPLY, "refusal"
-                    break
-                messages.append({"role": "assistant", "content": turn.assistant_content})
-                if not turn.tool_calls:
-                    text, stop_reason = turn.text, turn.stop_reason
-                    break
-                messages.append({"role": "user", "content": self._run_tools(turn, records)})
+            text, stop_reason = self._loop(system, messages, tools, records, ctx, turn_start)
+            # A reply quoting lot ids or prices no tool returned was answered from memory.
+            # Drop it and try once more, telling the model to look the facts up.
+            if stop_reason != "refusal" and _ungrounded(text, messages):
+                del messages[turn_start + 1 :]
+                records.clear()
+                text, stop_reason = self._loop(
+                    system + GROUNDING_RETRY, messages, tools, records, ctx, turn_start
+                )
+                if stop_reason != "refusal" and _ungrounded(text, messages):
+                    # Never show invented prices: say so and leave nothing false in the history.
+                    text = _UNVERIFIED_REPLY[detect_language(user_text) or "fr"]
+                    stop_reason = "unverified"
+                    del messages[turn_start + 1 :]
+                    records.clear()
+                    messages.append({"role": "assistant", "content": text})
         except Exception:
             del messages[turn_start:]
             raise
+
+        if messages and messages[-1]["role"] == "assistant":
+            references = _references(records)
+            if has_mixed_script_word(text) or _missing(references, text):
+                text = self._rewrite(text, references)
+                messages[-1] = {"role": "assistant", "content": text}
 
         return AgentReply(
             text=to_speech_text(text),
@@ -116,11 +172,50 @@ class Agent:
             latency_ms=(time.perf_counter() - started) * 1000,
         )
 
-    def _run_tools(self, turn: LLMTurn, records: list[ToolRecord]) -> list[dict[str, Any]]:
+    def _loop(
+        self,
+        system: str,
+        messages: list[dict[str, Any]],
+        tools: list[dict[str, Any]],
+        records: list[ToolRecord],
+        ctx: ToolContext,
+        turn_start: int,
+    ) -> tuple[str, str]:
+        for _ in range(self._max_steps):
+            turn = self._llm.complete(system=system, messages=messages, tools=tools)
+            if turn.stop_reason == "refusal":
+                del messages[turn_start:]
+                return _REFUSAL_REPLY, "refusal"
+            messages.append({"role": "assistant", "content": turn.assistant_content})
+            if not turn.tool_calls:
+                return turn.text, turn.stop_reason
+            messages.append({"role": "user", "content": self._run_tools(turn, records, ctx)})
+        return _MAX_STEPS_REPLY, "max_steps"
+
+    def _rewrite(self, text: str, references: list[str]) -> str:
+        """One extra call to fix what a voice or the user cannot use: words like "أavis", or an
+        id such as DRAFT-0001 spelled out in words. Keeps the original unless the rewrite
+        fixes both problems."""
+        system = REWRITE_PROMPT
+        if references:
+            system += f"The text must contain these ids written exactly: {', '.join(references)}.\n"
+        try:
+            turn = self._llm.complete(
+                system=system, messages=[{"role": "user", "content": text}], tools=[]
+            )
+        except LLMError:
+            return text
+        rewritten = turn.text.strip()
+        fixed = rewritten and not has_mixed_script_word(rewritten)
+        return rewritten if fixed and not _missing(references, rewritten) else text
+
+    def _run_tools(
+        self, turn: LLMTurn, records: list[ToolRecord], ctx: ToolContext
+    ) -> list[dict[str, Any]]:
         # All results of one assistant turn go back in a single user message.
         results = []
         for call in turn.tool_calls:
-            outcome = execute_tool(call.name, call.input, self._ctx)
+            outcome = execute_tool(call.name, call.input, ctx)
             records.append(ToolRecord(call.name, call.input, outcome.output, outcome.is_error))
             results.append(
                 {
@@ -131,6 +226,56 @@ class Agent:
                 }
             )
         return results
+
+
+def _tool_result_text(messages: list[dict[str, Any]]) -> str:
+    return " ".join(
+        str(block.get("content", ""))
+        for m in messages
+        if m["role"] == "user" and isinstance(m["content"], list)
+        for block in m["content"]
+        if block.get("type") == "tool_result"
+    )
+
+
+def _ungrounded(text: str, messages: list[dict[str, Any]]) -> bool:
+    """True when the reply states facts no tool returned in this conversation:
+
+    - a lot id that neither a tool result nor the user's own messages contain, or
+    - prices or areas (in any language, digits or words) when no tool has run at all.
+    Ids can be spelled out in words, which the first check misses; the second catches that."""
+    tool_text = _tool_result_text(messages)
+    seen = tool_text + " " + " ".join(_user_texts(messages))
+    if any(lot_id not in seen for lot_id in _LOT_ID.findall(text)):
+        return True
+    return not tool_text and bool(_FACT_WORDS.search(text)) and bool(_AMOUNT.search(text))
+
+
+def _references(records: list[ToolRecord]) -> list[str]:
+    """Ids the reply must contain: tickets, drafts and tracking numbers, and the first lots a
+    search found (the prompt allows mentioning at most three)."""
+    references = [
+        str(r.output[key])
+        for r in records
+        if not r.is_error
+        for key in REFERENCE_KEYS
+        if key in r.output
+    ]
+    for r in records:
+        if r.name == "search_lots" and not r.is_error:
+            references += [lot["id"] for lot in r.output.get("lots", [])[:MAX_LOTS_MENTIONED]]
+    return list(dict.fromkeys(references))
+
+
+def _missing(references: list[str], text: str) -> list[str]:
+    return [ref for ref in references if ref not in text]
+
+
+def _user_texts(messages: list[dict[str, Any]]) -> tuple[str, ...]:
+    # Tool results also travel as role "user", but as lists of blocks, not strings.
+    return tuple(
+        m["content"] for m in messages if m["role"] == "user" and isinstance(m["content"], str)
+    )
 
 
 def _pending_draft_id(records: list[ToolRecord]) -> str | None:

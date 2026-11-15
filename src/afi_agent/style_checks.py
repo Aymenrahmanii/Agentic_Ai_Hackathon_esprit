@@ -5,7 +5,8 @@ import re
 from collections.abc import Iterable
 from typing import Any
 
-from afi_agent.language import ARABIC_LETTERS, Script, dominant_script, latin_language
+from afi_agent.agent import REFERENCE_KEYS
+from afi_agent.language import Script, dominant_script, has_mixed_script_word, latin_language
 
 # Golden-set language tag -> script the reply must be written in.
 EXPECTED_SCRIPT: dict[str, Script] = {
@@ -21,19 +22,9 @@ _MARKDOWN = re.compile(
     re.MULTILINE,
 )
 
-REFERENCE_KEYS = ("ticket_id", "draft_id", "tracking_number")
-
 
 def has_markdown(text: str) -> bool:
     return bool(_MARKDOWN.search(text))
-
-
-_MIXED_SCRIPT_WORD = re.compile(f"[A-Za-zÀ-ÿ][{ARABIC_LETTERS}]|[{ARABIC_LETTERS}][A-Za-zÀ-ÿ]")
-
-
-def has_mixed_script_word(text: str) -> bool:
-    """Arabic and Latin letters inside one word, e.g. "Nجم", which TTS cannot read."""
-    return bool(_MIXED_SCRIPT_WORD.search(text))
 
 
 def script_ok(lang: str, reply: str) -> bool:

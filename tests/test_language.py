@@ -33,6 +33,10 @@ def test_every_golden_question_is_detected_correctly(case: dict) -> None:
     [
         ("Je veux le lot L-KAI-001", "fr"),
         ("I want lot L-SBZ-002 please", "en"),
+        ("Compare Kairouan and Sidi Bouzid zones.", "en"),
+        ("Comparer les zones de Sfax et Béja", "fr"),
+        ("Show me plots in Sfax", "en"),
+        ("Terrains disponibles à Kairouan ?", "fr"),
         ("3andi projet fi Beja", "arabizi"),
         ("L-KAI-001", None),
         ("👍", None),

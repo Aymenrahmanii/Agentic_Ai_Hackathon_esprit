@@ -1,22 +1,22 @@
 {
   "summary": {
-    "cases": 31,
-    "passed": 30,
-    "accuracy": 0.967741935483871,
+    "cases": 50,
+    "passed": 47,
+    "accuracy": 0.94,
     "accuracy_by_lang": {
-      "derja-ar": 0.8888888888888888,
-      "derja-latin": 1.0,
+      "derja-ar": 0.9230769230769231,
+      "derja-latin": 0.875,
       "fr": 1.0,
-      "en": 1.0,
+      "en": 0.9090909090909091,
       "ar": 1.0
     },
-    "style_ok": 0.967741935483871,
-    "script_ok": 0.967741935483871,
+    "style_ok": 1.0,
+    "script_ok": 1.0,
     "language_ok": 1.0,
     "references_ok": 1.0,
     "markdown_free_raw": 1.0,
-    "latency_ms_p50": 2407.0845000096597,
-    "latency_ms_p95": 4237.5378999859095,
+    "latency_ms_p50": 1911.288900009822,
+    "latency_ms_p95": 3344.005799968727,
     "errors": 0
   },
   "cases": [
@@ -28,13 +28,13 @@
       "called": [
         "search_lots"
       ],
-      "latency_ms": 3141.5309999720193,
+      "latency_ms": 2596.0791000397876,
       "error": null,
       "script_ok": true,
       "language_ok": true,
       "markdown_free": true,
       "references_ok": true,
-      "reply": "لقد وجدت قطعتي أرض مخصصة للنسيج في ولاية القيروان ضمن المنطقة الصناعية القيروان الجنوبي. القطعة الأولى تحمل الرمز L-KAI-001 ومساحتها ألفان متر مربع بسعر إجمالي تسعون ألف دينار. القطعة الثانية تحمل الرمز L-KAI-002 ومساحتها خمسة آلاف ومائتا متر مربع بسعر إجمالي مائتان وأربعة وثلاثون ألف دينار.",
+      "reply": "لقينا زوج أراضي متوفرة لقطاع النسيج في ولاية القيروان في منطقة القيروان الجنوبية. المقسم الأول برمز L-KAI-001 مساحته ألفين متر مربع وبسعر إجمالي تسعون ألف دينار. المقسم الثاني برمز L-KAI-002 مساحته خمسة آلاف ومئتان متر مربع وبسعر إجمالي مئتان وأربعة وثلاثون ألف دينار. تحب نحضرلك طلب حجز لواحد منهم؟",
       "passed": true,
       "style_ok": true
     },
@@ -46,13 +46,13 @@
       "called": [
         "search_lots"
       ],
-      "latency_ms": 2661.597000027541,
+      "latency_ms": 1930.003300018143,
       "error": null,
       "script_ok": true,
       "language_ok": true,
       "markdown_free": true,
       "references_ok": true,
-      "reply": "fi sfax fama l-lot L-SFX-001 b 180 alf dinar w l-lot L-SFX-002 b 880 alf dinar fel mentka l-sina3iya sfax nord. itha t7eb na3mlou talab wella t7eb ta3ref 7aja o5ra 9olli.",
+      "reply": "F Sfax fama maoutou9 fi Zone industrielle Sfax Nord. Mawjoud lot louwel b 180 alf dinar w مساحة متاعو 1500 mitro kare. W fama lot theni b 880 alf dinar w مساحة متاعو 8000 mitro kare. Ken theb nheb n7adherlek demande mte3 les details, 9oli esmek w chnowa el-nashat mte3ek.",
       "passed": true,
       "style_ok": true
     },
@@ -64,13 +64,13 @@
       "called": [
         "search_lots"
       ],
-      "latency_ms": 2850.768900010735,
+      "latency_ms": 1660.2273000171408,
       "error": null,
       "script_ok": true,
       "language_ok": true,
       "markdown_free": true,
       "references_ok": true,
-      "reply": "J'ai trouvé un terrain disponible à Béja d'une superficie de 6000 mètres carrés pour 240000 dinars dans la zone industrielle Béja Est. Sa référence est L-BEJ-001 et il convient aux secteurs agroalimentaire et textile.",
+      "reply": "J'ai trouvé un terrain disponible dans la zone industrielle Béja Est d'une superficie de six mille mètres carrés pour un prix total de deux cent quarante mille dinars. La référence de ce lot est L-BEJ-001. Voulez-vous préparer une demande pour ce terrain ?",
       "passed": true,
       "style_ok": true
     },
@@ -82,13 +82,13 @@
       "called": [
         "compare_zones"
       ],
-      "latency_ms": 2376.228299981449,
+      "latency_ms": 1690.6367000192404,
       "error": null,
       "script_ok": true,
       "language_ok": true,
       "markdown_free": true,
       "references_ok": true,
-      "reply": "Kairouan Sud zone covers forty two hectares with textile and food processing sectors and costs forty five dinars per square meter. Sidi Bouzid Ouest zone covers fifty hectares with food processing and construction materials sectors and costs twenty five dinars per square meter. Both zones benefit from regional development incentives.",
+      "reply": "Kairouan Sud industrial zone covers forty two hectares with textile and agroalimentaire sectors, available lots priced at forty five dinars per square metre, and infrastructure including medium voltage electricity, drinking water, sanitation and natural gas. Sidi Bouzid Ouest industrial zone covers fifty hectares with agroalimentaire and materiaux de construction sectors, available lots priced at twenty five dinars per square metre, and medium voltage electricity and drinking water. Both zones are regional development zones.",
       "passed": true,
       "style_ok": true
     },
@@ -100,13 +100,13 @@
       "called": [
         "get_procedure"
       ],
-      "latency_ms": 2319.065700052306,
+      "latency_ms": 1796.0257999948226,
       "error": null,
       "script_ok": true,
       "language_ok": true,
       "markdown_free": true,
       "references_ok": true,
-      "reply": "Pour réserver un lot, vous aurez besoin du formulaire de demande AFI, d'une copie de la pièce d'identité du promoteur, des statuts de la société ou de l'extrait du registre national des entreprises, ainsi que d'une étude sommaire du projet.",
+      "reply": "Pour réserver un lot, il vous faut le formulaire de demande AFI, une copie de la pièce d'identité du promoteur, les statuts de la société ou un extrait du registre national des entreprises, ainsi qu'une étude sommaire du projet.",
       "passed": true,
       "style_ok": true
     },
@@ -118,13 +118,13 @@
       "called": [
         "get_procedure"
       ],
-      "latency_ms": 3382.5209999922663,
+      "latency_ms": 2344.3623000057414,
       "error": null,
       "script_ok": true,
       "language_ok": true,
       "markdown_free": true,
       "references_ok": true,
-      "reply": "الوثائق المطلوبة لحجز مقسم صناعي هي استمارة الطلب حسب نموذج الوكالة العقارية الصناعية، نسخة من بطاقة هوية البعث، قوانين الشركة أو مستخرج من السجل الوطني للمؤسسات، ودراسة موجزة للمشروع.",
+      "reply": "الوثائق المطلوبة لحجز مقسم صناعي هي استمارة الطلب حسب نموذج الوكالة العقارية الصناعية، نسخة من بطاقة تعريف المروج، قوانين الشركة أو مستخرج من السجل الوطني للمؤسسات، ودراسة موجزة للمشروع.",
       "passed": true,
       "style_ok": true
     },
@@ -136,13 +136,13 @@
       "called": [
         "get_procedure"
       ],
-      "latency_ms": 2998.7375999917276,
+      "latency_ms": 1435.948800004553,
       "error": null,
       "script_ok": true,
       "language_ok": true,
       "markdown_free": true,
       "references_ok": true,
-      "reply": "للإجابة على سؤالك، لتحجير أرض صناعية تحتاج إلى تقديم استمارة الطلب حسب نموذج الوكالة العقارية الصناعية، نسخة من بطاقة الهوية للمستثمر، وثائق تأسيس الشركة مثل القانون الأساسي أو مستخرج من السجل الوطني للمؤسسات، ودراسة مبسطة للمشروع.",
+      "reply": "للحجز، تلزمك مطالبة نموذج الوكالة ونسخة من بطاقة التعريف الوطنية وقانون الشركة أو مستخرج من السجل الوطني للمؤسسات مع دراسة موجزة للمشروع.",
       "passed": true,
       "style_ok": true
     },
@@ -154,13 +154,13 @@
       "called": [
         "get_procedure"
       ],
-      "latency_ms": 3062.5865000183694,
+      "latency_ms": 1905.456900014542,
       "error": null,
       "script_ok": true,
       "language_ok": true,
       "markdown_free": true,
       "references_ok": true,
-      "reply": "La participation à une vente aux enchères de lots nécessite de consulter l'avis de vente publié par l'AFI et de retirer le cahier des charges. Il faut ensuite déposer l'offre avant la date limite avec un cahier des charges signé, une copie de la pièce d'identité du promoteur et un justificatif de caution. Enfin, vous devez assister à la séance d'adjudication.",
+      "reply": "Pour participer à une vente aux enchères, il faut consulter l'avis de vente publié par l'AFI et retirer le cahier des charges. Ensuite, vous devez déposer votre offre avant la date limite. Le dossier doit inclure le cahier des charges signé, une copie de votre pièce d'identité et un justificatif de caution. Enfin, vous assistez à la séance d'adjudication.",
       "passed": true,
       "style_ok": true
     },
@@ -172,13 +172,13 @@
       "called": [
         "track_dossier"
       ],
-      "latency_ms": 2015.2860999805853,
+      "latency_ms": 2617.2697999863885,
       "error": null,
       "script_ok": true,
       "language_ok": true,
       "markdown_free": true,
       "references_ok": true,
-      "reply": "لم نجد أي ملف يحمل رقم المتابعة هذا. تأكد من الرقم أو يمكننا إيصالك بموظف بشري من الوكالة لمساعدتك أكثر.",
+      "reply": "ما لقيناش ملف يحمل الرقم DEMO-0001. عاود تثبت من الرقم وإذا تحب تنجم تحكي مع مكلف من الوكالة العقارية الصناعية لمزيد المساعدة.",
       "passed": true,
       "style_ok": true
     },
@@ -190,13 +190,13 @@
       "called": [
         "track_dossier"
       ],
-      "latency_ms": 1612.497100024484,
+      "latency_ms": 1854.4449000037275,
       "error": null,
       "script_ok": true,
       "language_ok": true,
       "markdown_free": true,
       "references_ok": true,
-      "reply": "Aucun dossier n'a été trouvé avec le numéro DEMO-0001. Voulez-vous que je vous mette en relation avec un agent de l'AFI pour vérifier cela ?",
+      "reply": "Le dossier DEMO-0001 n'a pas été trouvé dans notre système. Souhaitez-vous que je vous mette en relation avec un agent de l'AFI pour vérifier cela de plus près ?",
       "passed": true,
       "style_ok": true
     },
@@ -208,13 +208,13 @@
       "called": [
         "escalate_to_human"
       ],
-      "latency_ms": 1942.4220999935642,
+      "latency_ms": 1783.47580000991,
       "error": null,
       "script_ok": true,
       "language_ok": true,
       "markdown_free": true,
       "references_ok": true,
-      "reply": "تم تحويل طلبك إلى موظف مختص من الوكالة ورقم التذكرة هو TICKET-0001. سوف يتواصل معك أحد وكلائنا قريباً لمساعدتك.",
+      "reply": "تم تسجيل طلبك وتحويلك إلى موظف مكلف من الوكالة تحت رقم التذكرة TICKET-0001 وسيتصل بك أحد وكلائنا قريباً.",
       "passed": true,
       "style_ok": true
     },
@@ -226,13 +226,13 @@
       "called": [
         "escalate_to_human"
       ],
-      "latency_ms": 2674.415199959185,
+      "latency_ms": 1815.0968999834731,
       "error": null,
       "script_ok": true,
       "language_ok": true,
       "markdown_free": true,
       "references_ok": true,
-      "reply": "I have escalated your request to a human AFI agent with reference TICKET-0001, and someone will contact you shortly.",
+      "reply": "I have opened a support ticket with reference TICKET-0001 for you. An AFI human agent will get in touch with you shortly.",
       "passed": true,
       "style_ok": true
     },
@@ -244,13 +244,13 @@
       "called": [
         "prefill_request"
       ],
-      "latency_ms": 4019.7920000064187,
+      "latency_ms": 2884.900600009132,
       "error": null,
       "script_ok": true,
       "language_ok": true,
       "markdown_free": true,
       "references_ok": true,
-      "reply": "7adhartelkom el demand b raqm DRAFT-0001 lel lot L-KAI-001. Rod belkom thabtew el ma3loumat w a3mlow confirm 3al screen bech tet3adda el demand.",
+      "reply": "Wdhatlek el draft rakma DRAFT-0001 mte3 el lot L-KAI-001 lil nachat textile b ism Sami Trabelsi. Tala3 3liha w a3mil Confirm fi el chaja bach tthabbet el talab mte3k.",
       "passed": true,
       "style_ok": true
     },
@@ -262,13 +262,13 @@
       "called": [
         "compare_zones"
       ],
-      "latency_ms": 3562.9743000026792,
+      "latency_ms": 1503.5453999880701,
       "error": null,
       "script_ok": true,
       "language_ok": true,
       "markdown_free": true,
       "references_ok": true,
-      "reply": "المنطقة الصناعية في باجة فيها قطاعات الصناعات الغذائية والنسيج وتتميز بكونها منطقة تنمية جهوية مع سعر المتر المربع بأربعين دينارا. أما المنطقة الصناعية في صفاقس فتضم قطاعات الميكانيك والبلاستيك والصناعات الغذائية مع توفر الألياف البصرية وسعر المتر المربع بين مئة وعشرة ومئة وعشرين دينارا.",
+      "reply": "المنطقة الصناعية بباجة فيها قطاعات الصناعات الغذائية والنسيج وتتميز بكونها منطقة تنمية جهوية مع سعر المتر المربع بخمسين دينارا. المنطقة الصناعية بصفاقس فيها قطاعات الميكانيك والبلاستيك والصناعات الغذائية مع توفر الألياف البصرية وسعر المتر المربع يتراوح بين مائة وعشرة ومائة وعشرين دينارا.",
       "passed": true,
       "style_ok": true
     },
@@ -280,13 +280,13 @@
       "called": [
         "compare_zones"
       ],
-      "latency_ms": 3112.627300026361,
+      "latency_ms": 1746.9292000168934,
       "error": null,
       "script_ok": true,
       "language_ok": true,
       "markdown_free": true,
       "references_ok": true,
-      "reply": "منطقة القيروان الجنوبية تحتوي على الكهرباء والماء الصالح للشراب والتطهير والغاز الطبيعي. منطقة باجة الشرقية تحتوي على الكهرباء والماء الصالح للشراب والتطهير. وكلا المنطقتين تعتبران من مناطق التنمية الجهوية. هل تحب أن أساعدك في البحث عن مقسم صناعي في إحدى هاتين المنطقتين؟",
+      "reply": "تتوفر في المنطقة الصناعية بالقيروان الجنوبية بنية تحتية تشمل الكهرباء ذات التوتر المتوسط والماء الصالح للشرائح والتطهير والغاز الطبيعي. أما في المنطقة الصناعية باجة الشرقية فتوجد الكهرباء ذات التوتر المتوسط والماء الصالح للشرائح والتطهير فقط.",
       "passed": true,
       "style_ok": true
     },
@@ -298,13 +298,13 @@
       "called": [
         "get_procedure"
       ],
-      "latency_ms": 1909.578800026793,
+      "latency_ms": 1967.158899991773,
       "error": null,
       "script_ok": true,
       "language_ok": true,
       "markdown_free": true,
       "references_ok": true,
-      "reply": "bech na7jez ardh sina3iya, lezmik t7dher formulaire de demande mta3 l AFI, w nos5a men bit identitét el moumathel, w statut mta3 ech-charika wala nos5a men rejistr watani lil moasasét, w dirasa mosara3a lil machrou3. Tnajjem tchouf tawa aza t7eb na3mlou dafret talab.",
+      "reply": "bech na7jez ardh sina3iya, lezmik formulaire de demande mta3 l'AFI, nuskha min bit idhentitét, statuts mta3 ech-charika wala extrait du registre national des entreprises, w étude sommaire du projet. Tnajjem tchouf astenna w taba3 el marhalét kemla.",
       "passed": true,
       "style_ok": true
     },
@@ -316,13 +316,13 @@
       "called": [
         "track_dossier"
       ],
-      "latency_ms": 2391.5897000115365,
+      "latency_ms": 1624.3770999717526,
       "error": null,
       "script_ok": true,
       "language_ok": true,
       "markdown_free": true,
       "references_ok": true,
-      "reply": "Maal9inech dossier bel numero DEMO-0001. Taktobelna numero o5or sa7i7 wala n3awnouk?",
+      "reply": "ma l9ina 7ata dossier b er-reference DEMO-0001. tnajjem tet2akked men er-reference walla t7eb n3awdou nlawej 3liha?",
       "passed": true,
       "style_ok": true
     },
@@ -334,13 +334,13 @@
       "called": [
         "escalate_to_human"
       ],
-      "latency_ms": 4329.239200043958,
+      "latency_ms": 2441.4155000122264,
       "error": null,
       "script_ok": true,
       "language_ok": true,
       "markdown_free": true,
       "references_ok": true,
-      "reply": "Enti taw fi saf el intidhar m3a agent bach yjawbek. Raqam el ticket mte3ek huwwa TICKET-0001.",
+      "reply": "Enti 7altou m3a agent w rja3tlek ticket rakm TICKET-0001 bech ykalmouk fi akrab wakt.",
       "passed": true,
       "style_ok": true
     },
@@ -352,13 +352,13 @@
       "called": [
         "search_lots"
       ],
-      "latency_ms": 2365.8678000210784,
+      "latency_ms": 1658.573199994862,
       "error": null,
       "script_ok": true,
       "language_ok": true,
       "markdown_free": true,
       "references_ok": true,
-      "reply": "Yes, we found three available lots for a food processing plant under 200,000 dinars. Lot L-KAI-001 in Kairouan Sud is available for 90,000 dinars. Lot L-SBZ-002 in Sidi Bouzid Ouest is available for 100,000 dinars. Lot L-SFX-001 in Sfax Nord is available for 180,000 dinars. Would you like to reserve one of these lots?",
+      "reply": "Yes, I found three available lots for a food processing plant under two hundred thousand dinars. There is a lot in Kairouan Sud for ninety thousand dinars. Another lot in Sidi Bouzid Ouest costs one hundred thousand dinars. A third lot is available in Sfax Nord for one hundred eighty thousand dinars.",
       "passed": true,
       "style_ok": true
     },
@@ -370,13 +370,13 @@
       "called": [
         "search_lots"
       ],
-      "latency_ms": 3164.0399000025354,
+      "latency_ms": 2460.1075000246055,
       "error": null,
       "script_ok": true,
       "language_ok": true,
       "markdown_free": true,
       "references_ok": true,
-      "reply": "Je vous propose deux terrains adaptés à la plasturgie dans le gouvernorat de Sfax. Le premier lot L-SFX-001 a une superficie de 1500 mètres carrés pour un prix total de 180000 dinars. Le second lot L-SFX-002 s'étend sur 8000 mètres carrés pour 880000 dinars. Souhaitez-vous que je prépare une demande pour l'un de ces terrains?",
+      "reply": "J'ai trouvé deux terrains disponibles pour la plasturgie dans la zone industrielle Sfax Nord à Sfax. Le premier terrain a une superficie de 1500 mètres carrés pour un prix total de 180000 dinars. Le deuxième terrain a une superficie de 8000 mètres carrés pour un prix total de 880000 dinars. Souhaitez-vous que je prépare une demande de réservation pour l'un de ces terrains?",
       "passed": true,
       "style_ok": true
     },
@@ -388,13 +388,13 @@
       "called": [
         "search_lots"
       ],
-      "latency_ms": 4237.5378999859095,
+      "latency_ms": 1666.0339999943972,
       "error": null,
       "script_ok": true,
       "language_ok": true,
       "markdown_free": true,
       "references_ok": true,
-      "reply": "لقد وجدت مقسمًا صناعيًا في ولاية سيدي بوزيد بمساحة عشرة آلاف متر مربع وبسعر مئتين و خمسين ألف دينار تونسي. المعرف الخاص بهذا المقسم هو L-SBZ-001 ويقع في المنطقة الصناعية سيدي بوزيد Ouest. إذا أردت حجز هذا المقسم، يرجى تزويدي باسمك الكامل ونشاطك الصناعي لنقوم بتحضير مطلب الحجز.",
+      "reply": "لقيتلك مقطع واحد في سيدي بوزيد مساحتو عشيرة آلاف متر مربع وسومو مائتان وخمسون ألف دينار تونسي في المنطقة الصناعية سيدي بوزيد الغربية. تجم تحجز المقسم هذا مباشرة وكان تحب نعملوك مطلب في الغرض.",
       "passed": true,
       "style_ok": true
     },
@@ -406,13 +406,13 @@
       "called": [
         "prefill_request"
       ],
-      "latency_ms": 2170.361700002104,
+      "latency_ms": 2497.3447999800555,
       "error": null,
       "script_ok": true,
       "language_ok": true,
       "markdown_free": true,
       "references_ok": true,
-      "reply": "حضرت المطلب برقم مرجع DRAFT-0001 لحجز المقسم L-BEJ-001 باسم سامي بن صالح لنشاط صناعات غذائية. يرجى مراجعة التفاصيل على الشاشة والضغط على زر التأكيد لإرساله.",
+      "reply": "حضرتلك مطلب لارساء المقسم بالرقم مرجع DRAFT-0001. تنجم تطلثو وتثبت فيه وبعد تضغط على تأكيد في الشاشة باش يوفى الإجراء.",
       "passed": true,
       "style_ok": true
     },
@@ -424,13 +424,13 @@
       "called": [
         "prefill_request"
       ],
-      "latency_ms": 2440.1601999998093,
+      "latency_ms": 1911.288900009822,
       "error": null,
       "script_ok": true,
       "language_ok": true,
       "markdown_free": true,
       "references_ok": true,
-      "reply": "I have prepared your request under draft reference DRAFT-0001 for lot L-SFX-002 to produce plastic parts. Please check the details on your screen and press confirm to submit your request.",
+      "reply": "I have prepared your request draft reference DRAFT-0001 for lot L-SFX-002. Please review the details on your screen and press Confirm to submit it.",
       "passed": true,
       "style_ok": true
     },
@@ -442,13 +442,13 @@
       "called": [
         "get_procedure"
       ],
-      "latency_ms": 2478.965500020422,
+      "latency_ms": 3002.43120000232,
       "error": null,
       "script_ok": true,
       "language_ok": true,
       "markdown_free": true,
       "references_ok": true,
-      "reply": "To take part in an auction for industrial lots, you need to consult the sale notice published by AFI, collect the specification notebook, and submit your offer before the deadline. The required documents are a signed specification notebook, a copy of the promoter's identity card, and a deposit receipt. Then you attend the adjudication session.",
+      "reply": "To take part in an auction for industrial lots, you must first consult the sale notice published by AFI and withdraw the specifications book. Then, you need to submit your bid before the deadline and attend the adjudication session. The required documents include a signed specifications book, a copy of the promoter's identity document, and a guarantee deposit receipt.",
       "passed": true,
       "style_ok": true
     },
@@ -460,15 +460,15 @@
       "called": [
         "get_procedure"
       ],
-      "latency_ms": 1894.0954999998212,
+      "latency_ms": 2608.2430999958888,
       "error": null,
-      "script_ok": false,
+      "script_ok": true,
       "language_ok": true,
       "markdown_free": true,
       "references_ok": true,
-      "reply": "المشاركة في البتة تتطلب الاطلاع على أavis de vente الصادر عن الوكالة وسحب كراس الشروط. كما يجب تقديم العرض قبل تاريخ الجلسة وتقديم الوثائق المطلوبة وهي كراس الشروط الموقع، نسخة من بطاقة التعريف، ومستثبت الضمان.",
+      "reply": "تنجم تشارك في البتة عبر الإطلاع على إعلان البيع وسحب كاس الدورة المتمثل في كراس الشروط. من بعد لازمك تودع العرض متاعك قبل الأجل المحدد باش تحضر لجلسة البتة. الوثائق المطلوبة هي كراس الشروط ممضي، نسخة من بطاقة التعريف، ومستثبت في الضمان. تحب نحولك عون من الوكالة العقارية الصناعية يساعدك أكثر؟",
       "passed": true,
-      "style_ok": false
+      "style_ok": true
     },
     {
       "case_id": "fr-prefill-missing-name",
@@ -476,13 +476,13 @@
       "tool_ok": true,
       "args_ok": true,
       "called": [],
-      "latency_ms": 1357.3403999907896,
+      "latency_ms": 1155.1448000245728,
       "error": null,
       "script_ok": true,
       "language_ok": true,
       "markdown_free": true,
       "references_ok": true,
-      "reply": "Il me manque quelques informations pour préparer votre demande. Quel est votre nom complet ainsi que l'activité exacte que vous prévoyez d'exercer sur ce lot ?",
+      "reply": "Je ne peux pas réserver ce lot directement, mais je peux préparer votre demande. Quel est votre nom complet et quelle activité prévoyez-vous d'exercer sur place ?",
       "passed": true,
       "style_ok": true
     },
@@ -494,13 +494,13 @@
       "called": [
         "prefill_request"
       ],
-      "latency_ms": 1954.4892000267282,
+      "latency_ms": 1716.8552000075579,
       "error": null,
       "script_ok": true,
       "language_ok": true,
       "markdown_free": true,
       "references_ok": true,
-      "reply": "لقد قمت بتحضير طلب حجز القطعة L-SBZ-001 باسم كريم. يرجى مراجعة المسودة برمز DRAFT-0001 ثم الضغط على زر التأكيد على الشاشة. ما هو النشاط الصناعي الذي تخطط للقيام به؟",
+      "reply": "مرحبا بك يا كريم. ماهو نشاطك الصناعي أو طبيعة المنتوج الذي تخطط لإنتاجه لكي أتمكن من تحضير مطلب حجز المقسم L-SBZ-001 لك؟",
       "passed": false,
       "style_ok": true
     },
@@ -512,13 +512,13 @@
       "called": [
         "prefill_request"
       ],
-      "latency_ms": 2407.0845000096597,
+      "latency_ms": 2198.357599962037,
       "error": null,
       "script_ok": true,
       "language_ok": true,
       "markdown_free": true,
       "references_ok": true,
-      "reply": "Le lot L-KAI-003 est déjà vendu et n'est plus disponible pour une réservation. Voulez-vous que je cherche d'autres lots disponibles pour votre activité de textile?",
+      "reply": "Le lot L-KAI-003 est déjà vendu et n'est plus disponible. Je vous invite à consulter les autres lots disponibles pour votre activité textile.",
       "passed": true,
       "style_ok": true
     },
@@ -530,13 +530,13 @@
       "called": [
         "search_lots"
       ],
-      "latency_ms": 2321.6062000137754,
+      "latency_ms": 1964.0045000123791,
       "error": null,
       "script_ok": true,
       "language_ok": true,
       "markdown_free": true,
       "references_ok": true,
-      "reply": "Je ne trouve pas de résultats pour le gouvernorat de Tozeur. Nous avons des terrains disponibles à Kairouan, Sfax, Béja et Sidi Bouzid. Souhaitez-vous explorer l'une de ces régions?",
+      "reply": "Je n'ai pas trouvé de gouvernorat correspondant à Tozeur dans notre base de données. Les gouvernorats disponibles sont Kairouan, Sfax, Béja et Sidi Bouzid. Voulez-vous consulter les lots dans l'un de ces gouvernorats ?",
       "passed": true,
       "style_ok": true
     },
@@ -546,13 +546,13 @@
       "tool_ok": true,
       "args_ok": true,
       "called": [],
-      "latency_ms": 1411.231600039173,
+      "latency_ms": 1399.72599997418,
       "error": null,
       "script_ok": true,
       "language_ok": true,
       "markdown_free": true,
       "references_ok": true,
-      "reply": "I can only help you with finding industrial lots, checking procedures, or tracking requests with the Agence Foncière Industrielle. How can I assist you with your industrial project today?",
+      "reply": "I can only help you with AFI industrial land services, such as finding industrial lots and checking procedures.",
       "passed": true,
       "style_ok": true
     },
@@ -562,13 +562,351 @@
       "tool_ok": true,
       "args_ok": true,
       "called": [],
-      "latency_ms": 902.8295999742113,
+      "latency_ms": 1216.146899969317,
       "error": null,
       "script_ok": true,
       "language_ok": true,
       "markdown_free": true,
       "references_ok": true,
-      "reply": "عسلامة، أنا مساعد وكالة العقارات الصناعية، ونجم نعاونك باش تلقى أراضي صناعية وتعرف الإجراءات المتاحة لكل مشروع. شنوا المشروع اللي تحب تعملو و في أي ولاية تحوس؟",
+      "reply": "أهلاً بك. أنا مساعد الوكالة العقارية الصناعية ويمكنني مساعدتك في البحث عن مقاطع أرض صناعية، والاستفسار عن إجراءات الحجز، وتحضير ملف طلب أرض. تفضل بطرح سؤالك أو حدد طلبك لنبدأ.",
+      "passed": true,
+      "style_ok": true
+    },
+    {
+      "case_id": "derja-ar-followup-book",
+      "lang": "derja-ar",
+      "tool_ok": true,
+      "args_ok": true,
+      "called": [
+        "prefill_request"
+      ],
+      "latency_ms": 1845.2945000026375,
+      "error": null,
+      "script_ok": true,
+      "language_ok": true,
+      "markdown_free": true,
+      "references_ok": true,
+      "reply": "لقد قمت بتحضير مسودة الطلب برمز DRAFT-0001 لحجز المقسم L-KAI-001 باسم سامي بن صالح لنشاط النسيج. يرجى مراجعتها وتأكيدها عبر الشاشة.",
+      "passed": true,
+      "style_ok": true
+    },
+    {
+      "case_id": "fr-name-then-activity",
+      "lang": "fr",
+      "tool_ok": true,
+      "args_ok": true,
+      "called": [
+        "prefill_request"
+      ],
+      "latency_ms": 3344.005799968727,
+      "error": null,
+      "script_ok": true,
+      "language_ok": true,
+      "markdown_free": true,
+      "references_ok": true,
+      "reply": "J'ai préparé votre projet de demande de réservation pour le lot L-BEJ-001 sous la référence DRAFT-0001. Veuillez vérifier les informations affichées à l'écran et appuyer sur Confirmer pour soumettre votre demande.",
+      "passed": true,
+      "style_ok": true
+    },
+    {
+      "case_id": "en-followup-compare",
+      "lang": "en",
+      "tool_ok": true,
+      "args_ok": true,
+      "called": [
+        "compare_zones"
+      ],
+      "latency_ms": 2335.184100025799,
+      "error": null,
+      "script_ok": true,
+      "language_ok": true,
+      "markdown_free": true,
+      "references_ok": true,
+      "reply": "Sfax North industrial zone features mechanical, plastic and food processing sectors with four infrastructure types and prices between 110 and 120 dinars per square meter. Beja East industrial zone features food processing and textile sectors, regional development incentives, three infrastructure types and a price of 40 dinars per square meter.",
+      "passed": true,
+      "style_ok": true
+    },
+    {
+      "case_id": "arabizi-followup-procedure",
+      "lang": "derja-latin",
+      "tool_ok": true,
+      "args_ok": true,
+      "called": [
+        "get_procedure"
+      ],
+      "latency_ms": 2481.037900026422,
+      "error": null,
+      "script_ok": true,
+      "language_ok": true,
+      "markdown_free": true,
+      "references_ok": true,
+      "reply": "bech na7jez lot lazmek formulaire de demande mta3 l AFI, w nos5a mel piec identity mta3 l promotor, w statut mta3 l chariqa wala extrait mel registre national des entreprises, w etude sommaire mta3 l projet. Ken t7eb npreparilek dossier meloul, a3tini esmek w chnowa l nachat eli t7eb ta3mlo.",
+      "passed": true,
+      "style_ok": true
+    },
+    {
+      "case_id": "msa-track",
+      "lang": "ar",
+      "tool_ok": true,
+      "args_ok": true,
+      "called": [
+        "track_dossier"
+      ],
+      "latency_ms": 2627.7785999700427,
+      "error": null,
+      "script_ok": true,
+      "language_ok": true,
+      "markdown_free": true,
+      "references_ok": true,
+      "reply": "عذرا، لم نجد أي ملف يحمل رقم المتابعة DEMO-0001. يرجى التأكد من الرقم أو التواصل معنا للمساعدة.",
+      "passed": true,
+      "style_ok": true
+    },
+    {
+      "case_id": "msa-escalate",
+      "lang": "ar",
+      "tool_ok": true,
+      "args_ok": true,
+      "called": [
+        "escalate_to_human"
+      ],
+      "latency_ms": 1984.952999977395,
+      "error": null,
+      "script_ok": true,
+      "language_ok": true,
+      "markdown_free": true,
+      "references_ok": true,
+      "reply": "سأقوم بتوجيه طلبك إلى أحد أعوان الوكالة المختصين، رقم التذكرة هو TICKET-0001. سيتم التواصل معك قريباً.",
+      "passed": true,
+      "style_ok": true
+    },
+    {
+      "case_id": "fr-escalate",
+      "lang": "fr",
+      "tool_ok": true,
+      "args_ok": true,
+      "called": [
+        "escalate_to_human"
+      ],
+      "latency_ms": 1775.0076999654993,
+      "error": null,
+      "script_ok": true,
+      "language_ok": true,
+      "markdown_free": true,
+      "references_ok": true,
+      "reply": "Un conseiller va vous contacter. Votre ticket de suivi est TICKET-0001.",
+      "passed": true,
+      "style_ok": true
+    },
+    {
+      "case_id": "en-track",
+      "lang": "en",
+      "tool_ok": true,
+      "args_ok": true,
+      "called": [
+        "track_dossier"
+      ],
+      "latency_ms": 2223.2890000450425,
+      "error": null,
+      "script_ok": true,
+      "language_ok": true,
+      "markdown_free": true,
+      "references_ok": true,
+      "reply": "I could not find any request with the tracking number DEMO-0001. Please check the reference number and try again, or let me know if you would like to speak with an AFI agent.",
+      "passed": true,
+      "style_ok": true
+    },
+    {
+      "case_id": "en-procedure",
+      "lang": "en",
+      "tool_ok": true,
+      "args_ok": true,
+      "called": [
+        "get_procedure"
+      ],
+      "latency_ms": 2185.7550000422634,
+      "error": null,
+      "script_ok": true,
+      "language_ok": true,
+      "markdown_free": true,
+      "references_ok": true,
+      "reply": "To reserve an industrial lot, you need the AFI application form, a copy of the promoter identity piece, the company bylaws or national enterprise register extract, and a summary project study. Would you like me to help you find an available lot?",
+      "passed": true,
+      "style_ok": true
+    },
+    {
+      "case_id": "arabizi-compare",
+      "lang": "derja-latin",
+      "tool_ok": true,
+      "args_ok": true,
+      "called": [
+        "compare_zones"
+      ],
+      "latency_ms": 2099.79809995275,
+      "error": null,
+      "script_ok": true,
+      "language_ok": true,
+      "markdown_free": true,
+      "references_ok": true,
+      "reply": "fi kairouan el soum b arbaa w khamsin dinar el metrou w tnajjem tal9a tnisij w agroualimantir. fi sidi bouzid el soum b khamsa w isrin dinar el metrou w faha agroualimantir w matiryo construction. zouz fihom el mant9a el jahwia w iltizamet mte3 el infra.",
+      "passed": true,
+      "style_ok": true
+    },
+    {
+      "case_id": "fr-search-budget-area",
+      "lang": "fr",
+      "tool_ok": true,
+      "args_ok": true,
+      "called": [
+        "search_lots"
+      ],
+      "latency_ms": 1544.2291999934241,
+      "error": null,
+      "script_ok": true,
+      "language_ok": true,
+      "markdown_free": true,
+      "references_ok": true,
+      "reply": "J'ai trouvé un terrain disponible à Sidi Bouzid d'une superficie de 4000 mètres carrés pour un prix total de 100000 dinars. C'est le lot L-SBZ-002 dans la zone industrielle Sidi Bouzid Ouest. Souhaitez-vous que je prépare une demande pour ce terrain ?",
+      "passed": true,
+      "style_ok": true
+    },
+    {
+      "case_id": "derja-ar-search-budget",
+      "lang": "derja-ar",
+      "tool_ok": true,
+      "args_ok": true,
+      "called": [
+        "search_lots"
+      ],
+      "latency_ms": 3526.377899979707,
+      "error": null,
+      "script_ok": true,
+      "language_ok": true,
+      "markdown_free": true,
+      "references_ok": true,
+      "reply": "لقيت زوج مقاسم تناسب ميزانيتك. المقسم الأول في القيروان مساحتو ألفين متر مربع وبسعر إجمالي تسعين ألف دينار ورقم التعريف متاعو L-KAI-001. المقسم الثاني في سيدي بوزيد مساحتو أربعة آلاف متر مربع وبسعر إجمالي مائة ألف دينار ورقم التعريف متاعو L-SBZ-002. حبست الأسعار في حدود ميزانيتك وبدون تحديد نشاط معين. تحب نعملوك مطلب حجز لأحد هذه المقاسم؟",
+      "passed": true,
+      "style_ok": true
+    },
+    {
+      "case_id": "en-search-mechanical",
+      "lang": "en",
+      "tool_ok": true,
+      "args_ok": true,
+      "called": [
+        "search_lots"
+      ],
+      "latency_ms": 1614.5331000443548,
+      "error": null,
+      "script_ok": true,
+      "language_ok": true,
+      "markdown_free": true,
+      "references_ok": true,
+      "reply": "I found two mechanical sector lots in Sfax Nord. One is 1500 square meters for 180000 dinars with ID L-SFX-001. The other is 8000 square meters for 880000 dinars with ID L-SFX-002. Let me know which one you prefer and provide your name to prepare your request.",
+      "passed": true,
+      "style_ok": true
+    },
+    {
+      "case_id": "derja-ar-search-food",
+      "lang": "derja-ar",
+      "tool_ok": true,
+      "args_ok": true,
+      "called": [
+        "search_lots"
+      ],
+      "latency_ms": 3390.7032999559306,
+      "error": null,
+      "script_ok": true,
+      "language_ok": true,
+      "markdown_free": true,
+      "references_ok": true,
+      "reply": "لقيتلك مقسمين في ولاية سيدي بوزيد للصناعات الغذائية. المقسم الأول برمز L-SBZ-002 مساحتو أربعة آلاف متر مربع وسومو مائة ألف دينار. والمقسم الثاني بررمز L-SBZ-001 مساحتو عشرة آلاف متر مربع وسومو مائتان وخمسون ألف دينار. تحب نكملو نحضرو مطلب الحجز؟",
+      "passed": true,
+      "style_ok": true
+    },
+    {
+      "case_id": "msa-auction",
+      "lang": "ar",
+      "tool_ok": true,
+      "args_ok": true,
+      "called": [
+        "get_procedure"
+      ],
+      "latency_ms": 2121.3043999741785,
+      "error": null,
+      "script_ok": true,
+      "language_ok": true,
+      "markdown_free": true,
+      "references_ok": true,
+      "reply": "للمشاركة في بتة المقاسم الصناعية، عليك أولاً الاطلاع على إعلان البيع الذي تصدره الوكالة، ثم سحب كراسة الشروط. بعد ذلك، يجب تقديم العرض قبل تاريخ الانتهاء والمشاركة في جلسة الترسية. تتطلب العملية تقديم كراسة الشروط موقعة مع نسخة من بطاقة الهوية وإثبات الضمان المالي.",
+      "passed": true,
+      "style_ok": true
+    },
+    {
+      "case_id": "en-prefill-missing-activity",
+      "lang": "en",
+      "tool_ok": false,
+      "args_ok": true,
+      "called": [
+        "prefill_request"
+      ],
+      "latency_ms": 1414.2328000161797,
+      "error": null,
+      "script_ok": true,
+      "language_ok": true,
+      "markdown_free": true,
+      "references_ok": true,
+      "reply": "Could you please tell me what activity or product your project will have, so I can complete your reservation request?",
+      "passed": false,
+      "style_ok": true
+    },
+    {
+      "case_id": "arabizi-prefill-missing-name",
+      "lang": "derja-latin",
+      "tool_ok": false,
+      "args_ok": true,
+      "called": [
+        "prefill_request"
+      ],
+      "latency_ms": 1907.5414999970235,
+      "error": null,
+      "script_ok": true,
+      "language_ok": true,
+      "markdown_free": true,
+      "references_ok": true,
+      "reply": "Chenna esmek w er9mek bech najmou nprepariwelnek el demand mte3ek lel lot L-BEJ-001.",
+      "passed": false,
+      "style_ok": true
+    },
+    {
+      "case_id": "fr-out-of-scope",
+      "lang": "fr",
+      "tool_ok": true,
+      "args_ok": true,
+      "called": [],
+      "latency_ms": 926.6967999865301,
+      "error": null,
+      "script_ok": true,
+      "language_ok": true,
+      "markdown_free": true,
+      "references_ok": true,
+      "reply": "Je ne peux pas vous aider pour les restaurants, mais je suis à votre disposition pour vous aider à trouver un terrain industriel ou à connaître les procédures de l'AFI.",
+      "passed": true,
+      "style_ok": true
+    },
+    {
+      "case_id": "derja-ar-out-of-scope",
+      "lang": "derja-ar",
+      "tool_ok": true,
+      "args_ok": true,
+      "called": [],
+      "latency_ms": 1419.2174000199884,
+      "error": null,
+      "script_ok": true,
+      "language_ok": true,
+      "markdown_free": true,
+      "references_ok": true,
+      "reply": "أنا مساعد الوكالة العقارية الصناعية ويمكنني مساعدتك في البحث عن مقاطع أرضية صناعية، الاطلاع على الإجراءات أو متابعة ملفاتك. أما بخصوص نتائج المباريات الرياضية فلا يمكنني إفادتك فيها.",
       "passed": true,
       "style_ok": true
     }

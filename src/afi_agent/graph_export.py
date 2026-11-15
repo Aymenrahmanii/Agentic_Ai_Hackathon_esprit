@@ -1,6 +1,8 @@
 """Turn the seed data into Cypher statements for Neo4j.
 
-Usage: python -m afi_agent.graph_export graph/seed.cypher
+Usage:
+  python -m afi_agent.graph_export graph/seed.cypher   write a Cypher file
+  python -m afi_agent.graph_export load                load schema and seed into Neo4j
 """
 
 import json
@@ -67,13 +69,36 @@ def seed_to_cypher(seed: SeedData) -> str:
             f"MERGE (p:Procedure {{id: {q(p.id)}}}) "
             f"SET p.title = {q(p.title)}, p.steps = {q(p.steps)}, p.verified = {q(p.verified)}"
         )
-        for document in p.documents:
+        for position, document in enumerate(p.documents):
             statements.append(
                 f"MATCH (p:Procedure {{id: {q(p.id)}}}) MERGE (d:Document {{name: {q(document)}}}) "
-                "MERGE (p)-[:REQUIRES]->(d)"
+                f"MERGE (p)-[r:REQUIRES]->(d) SET r.position = {position}"
             )
 
+    # Whether the data is real travels with the graph, so the app can warn about demo data.
+    statements.append(
+        f"MERGE (m:Dataset {{key: 'seed'}}) SET m.synthetic = {q(seed.synthetic)}, "
+        f"m.note = {q(seed.note)}"
+    )
     return ";\n".join(statements) + ";\n"
+
+
+def split_statements(cypher: str) -> list[str]:
+    """Statements of a Cypher file, without comments, for running them one by one."""
+    lines = [line for line in cypher.splitlines() if not line.strip().startswith("//")]
+    return [s.strip() for s in "\n".join(lines).split(";\n") if s.strip().rstrip(";")]
+
+
+def load_into_neo4j(seed: SeedData, schema_path: Path) -> int:
+    """Create the schema and load the seed straight into Neo4j (NEO4J_* settings)."""
+    from afi_agent.graph_store import neo4j_driver  # needs the optional `graph` extra
+
+    statements = split_statements(schema_path.read_text(encoding="utf-8"))
+    statements += split_statements(seed_to_cypher(seed))
+    with neo4j_driver() as driver, driver.session() as session:
+        for statement in statements:
+            session.run(statement.rstrip(";")).consume()
+    return len(statements)
 
 
 def main(argv: list[str]) -> int:
@@ -82,6 +107,11 @@ def main(argv: list[str]) -> int:
         return 2
     seed_path = load_settings().seed_path
     seed = SeedData.model_validate(json.loads(seed_path.read_text(encoding="utf-8")))
+    if argv[1] == "load":
+        schema = Path(__file__).resolve().parents[2] / "graph" / "schema.cypher"
+        count = load_into_neo4j(seed, schema)
+        print(f"Ran {count} statements against Neo4j from {seed_path}")
+        return 0
     Path(argv[1]).write_text(seed_to_cypher(seed), encoding="utf-8")
     print(f"Wrote {argv[1]} from {seed_path}")
     return 0

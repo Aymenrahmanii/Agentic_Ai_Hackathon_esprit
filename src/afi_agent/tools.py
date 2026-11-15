@@ -17,6 +17,9 @@ class ToolError(Exception):
 class ToolContext:
     store: KnowledgeStore
     afizi: AfiziMock
+    # Everything the user has written in this session; tools that must not invent user
+    # details check their inputs against it. The agent fills it in for each turn.
+    user_messages: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -68,12 +71,20 @@ class GetProcedureInput(_Input):
 
 class PrefillRequestInput(_Input):
     lot_id: str
-    applicant_name: str = Field(min_length=1, description="As the user stated it.")
-    activity: str = Field(
+    applicant_name: str = Field(min_length=1, description="The applicant's name.")
+    applicant_name_quote: str = Field(
         min_length=1,
-        description="What the investor plans to produce, as the user stated it. If the user "
-        "has not said, do not call this tool: ask them first. Never guess or use a generic "
-        "value.",
+        description="The user's own words giving their name, copied exactly from their "
+        "message (e.g. 'إسمي سامي' or 'Sami Trabelsi').",
+    )
+    activity: str = Field(
+        min_length=1, description="What the investor plans to produce, in French if possible."
+    )
+    activity_quote: str = Field(
+        min_length=1,
+        description="The user's own words describing the activity, copied exactly from their "
+        "message (e.g. 'النشاط متاعي نسيج'). If the user has not said what they will produce, "
+        "do not call this tool: ask them first.",
     )
     company_name: str | None = None
     phone: str | None = None
@@ -168,7 +179,60 @@ def _get_procedure(args: GetProcedureInput, ctx: ToolContext) -> dict[str, Any]:
     return procedure.model_dump()
 
 
+def said_by_user(quote: str, user_messages: tuple[str, ...]) -> bool:
+    """True when the quote appears in something the user wrote (ignoring case, accents,
+    Arabic diacritics, spacing and punctuation)."""
+    wanted = normalize(quote)
+    return bool(wanted) and any(wanted in normalize(message) for message in user_messages)
+
+
+def _require_user_words(field: str, quote: str, ctx: ToolContext) -> None:
+    if not said_by_user(quote, ctx.user_messages):
+        raise ToolError(
+            f"'{quote}' does not appear in the user's messages, so the {field} was not given "
+            f"by the user. Do not guess: ask the user for their {field}, then call this tool "
+            "again with their exact words."
+        )
+
+
+# Values models put in when the user gave no activity (compared after normalize()).
+_PLACEHOLDER_ACTIVITIES = frozenset(
+    normalize(value)
+    for value in (
+        "not specified",
+        "unspecified",
+        "unknown",
+        "n/a",
+        "none",
+        "general",
+        "general industry",
+        "non spécifié",
+        "non précisé",
+        "inconnu",
+        "général",
+        "industrie générale",
+        "غير محدد",
+        "غير معروف",
+        "صناعة عامة",
+    )
+)
+
+
+def _require_real_activity(args: PrefillRequestInput, ctx: ToolContext) -> None:
+    _require_user_words("activity", args.activity_quote, ctx)
+    # The quote must describe the activity, not repeat the booking request ("reserve lot X").
+    if normalize(args.lot_id) in normalize(args.activity_quote) or (
+        normalize(args.activity) in _PLACEHOLDER_ACTIVITIES
+    ):
+        raise ToolError(
+            "The user has not said what they will produce. Do not guess: ask the user for "
+            "their activity, then call this tool again with their exact words."
+        )
+
+
 def _prefill_request(args: PrefillRequestInput, ctx: ToolContext) -> dict[str, Any]:
+    _require_user_words("name", args.applicant_name_quote, ctx)
+    _require_real_activity(args, ctx)
     try:
         draft = ctx.afizi.create_draft(
             lot_id=args.lot_id.strip().upper(),

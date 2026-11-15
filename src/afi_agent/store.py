@@ -50,6 +50,9 @@ class KnowledgeStore(Protocol):
 
 class InMemoryStore:
     def __init__(self, seed: SeedData) -> None:
+        # Whether this is invented demo data, so the interface can say so.
+        self.synthetic = seed.synthetic
+        self.data_note = seed.note
         self._zones = {zone.id: zone for zone in seed.zones}
         self._lots = {lot.id: lot for lot in seed.lots}
         self._procedures = {procedure.id: procedure for procedure in seed.procedures}

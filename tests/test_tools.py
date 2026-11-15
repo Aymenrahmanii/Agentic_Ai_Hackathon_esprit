@@ -1,3 +1,5 @@
+from dataclasses import replace
+
 from afi_agent.tools import TOOLS, ToolContext, execute_tool, tool_schemas
 
 
@@ -57,24 +59,92 @@ def test_get_procedure(ctx: ToolContext) -> None:
     assert "reservation_lot" in unknown.output["error"]
 
 
+BOOKING_MESSAGE = "Je m'appelle Test Investor et mon activité est le textile."
+
+
+def booking(lot_id: str, **overrides: str) -> dict[str, str]:
+    return {
+        "lot_id": lot_id,
+        "applicant_name": "Test Investor",
+        "applicant_name_quote": "Test Investor",
+        "activity": "textile",
+        "activity_quote": "mon activité est le textile",
+        **overrides,
+    }
+
+
 def test_prefill_creates_a_draft_but_submits_nothing(ctx: ToolContext) -> None:
-    outcome = execute_tool(
-        "prefill_request",
-        {"lot_id": "l-kai-001", "applicant_name": "Test Investor", "activity": "textile"},
-        ctx,
-    )
+    ctx = replace(ctx, user_messages=(BOOKING_MESSAGE,))
+    outcome = execute_tool("prefill_request", booking("l-kai-001"), ctx)
     assert not outcome.is_error
     assert outcome.output["draft"]["status"] == "awaiting_confirmation"
     assert outcome.output["draft"]["tracking_number"] is None
     assert ctx.store.get_lot("L-KAI-001").status == "available"
 
 
-def test_prefill_rejects_unavailable_lot(ctx: ToolContext) -> None:
-    outcome = execute_tool(
-        "prefill_request",
-        {"lot_id": "L-KAI-003", "applicant_name": "Test Investor", "activity": "textile"},
-        ctx,
+def test_prefill_rejects_details_the_user_never_gave(ctx: ToolContext) -> None:
+    ctx = replace(ctx, user_messages=("Réservez-moi le lot L-KAI-002, je m'appelle Karim.",))
+    invented = booking(
+        "L-KAI-002",
+        applicant_name="Karim",
+        applicant_name_quote="je m'appelle Karim",
+        activity="industrie générale",
+        activity_quote="industrie générale",
     )
+
+    outcome = execute_tool("prefill_request", invented, ctx)
+
+    assert outcome.is_error
+    assert "ask the user for their activity" in outcome.output["error"]
+    assert ctx.afizi.get_draft("DRAFT-0001") is None
+
+
+def test_prefill_rejects_the_booking_request_quoted_as_the_activity(ctx: ToolContext) -> None:
+    message = "Reserve lot L-SFX-001 for me, my name is Leila Ben Ali."
+    ctx = replace(ctx, user_messages=(message,))
+    loophole = booking(
+        "L-SFX-001",
+        applicant_name="Leila Ben Ali",
+        applicant_name_quote="Leila Ben Ali",
+        activity="Not specified",
+        activity_quote="Reserve lot L-SFX-001 for me",
+    )
+
+    outcome = execute_tool("prefill_request", loophole, ctx)
+
+    assert outcome.is_error
+    assert "ask the user for their activity" in outcome.output["error"]
+
+
+def test_prefill_rejects_placeholder_activities(ctx: ToolContext) -> None:
+    ctx = replace(ctx, user_messages=("Je m'appelle Karim, activité inconnue pour l'instant",))
+    placeholder = booking(
+        "L-KAI-002",
+        applicant_name="Karim",
+        applicant_name_quote="Karim",
+        activity="Inconnu",
+        activity_quote="activité inconnue",
+    )
+
+    assert execute_tool("prefill_request", placeholder, ctx).is_error
+
+
+def test_quotes_match_across_case_accents_and_arabic_diacritics(ctx: ToolContext) -> None:
+    ctx = replace(ctx, user_messages=("نحب نحجز L-KAI-001، إسمي سامي والنشاط متاعي نسيج",))
+    arabic = booking(
+        "L-KAI-001",
+        applicant_name="سامي",
+        applicant_name_quote="إِسمي سامي",
+        activity="textile",
+        activity_quote="النشاط متاعي نسيج",
+    )
+
+    assert not execute_tool("prefill_request", arabic, ctx).is_error
+
+
+def test_prefill_rejects_unavailable_lot(ctx: ToolContext) -> None:
+    ctx = replace(ctx, user_messages=(BOOKING_MESSAGE,))
+    outcome = execute_tool("prefill_request", booking("L-KAI-003"), ctx)
     assert outcome.is_error
     assert "sold" in outcome.output["error"]
 

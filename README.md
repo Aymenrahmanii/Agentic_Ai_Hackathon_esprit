@@ -30,6 +30,35 @@ Every answer about lots, prices and procedures comes from a tool result, not fro
 memory, and replies are written as short plain sentences ready to be read aloud by a
 text-to-speech voice.
 
+## The web interface
+
+Start the app (see [Quickstart](#quickstart)) and open http://127.0.0.1:8000. The interface is
+in French, the administrative language AFI works in; the conversation follows whatever
+language the user writes or speaks.
+
+- **Conversation** with example questions, push-to-talk and an option to read replies aloud.
+  Voice uses the browser's own speech recognition and voice for now (Chrome or Edge), until
+  the Derja speech models are chosen.
+- **Map** of the industrial zones. The zones a search or comparison returns light up and the
+  map flies to them.
+- **Plots drawn to scale** by area and coloured by status (available, reserved, sold), with
+  the lots the agent found outlined.
+- **What the agent did:** each tool call with its arguments and result, and which model
+  answered in how many seconds, so a jury sees the agent working.
+- **Request draft card** with the only button that submits a request. After Confirm it shows
+  the tracking number and the plot turns to reserved.
+
+A banner says when the data is invented, and the model badge turns amber when the fallback
+model answered.
+
+### Offline demo mode
+
+If the venue network or a free API fails, restart with `AFI_PROVIDER=replay`. The agent then
+answers the questions recorded in `docs/demo/conversations.json` (including all three
+example questions) with no network. The tools still run for real, so plots, drafts, Confirm
+and tracking numbers behave as in a live demo. Other questions get a short "offline mode"
+notice.
+
 ## See it working
 
 All animations replay **real model output**, recorded through the API with
@@ -74,9 +103,9 @@ flowchart LR
   turns are rolled back, so a provider error never leaves a half-written conversation.
 - **Tools** (`tools.py`): six tools with validated inputs. Bad input comes back to the model as
   an error it can recover from: an unknown governorate or sector returns the list of valid ones.
-- **Knowledge store** (`store.py`): an in-memory store behind a `KnowledgeStore` interface.
-  Governorate names match across scripts and spellings (القيروان, kairouan and 9irwen all resolve
-  to Kairouan). A Neo4j schema and export are ready in `graph/`.
+- **Knowledge store** (`store.py`, `graph_store.py`): zones, lots and procedures, read from
+  `data/seed.json` or from Neo4j (`AFI_STORE=neo4j`). Governorate names match across scripts
+  and spellings (القيروان, kairouan and 9irwen all resolve to Kairouan).
 - **Human confirmation**: the only way to submit a request is `POST /requests/{draft_id}/confirm`,
   which the interface calls when the user presses Confirm. The model has no tool that submits.
 - **Model providers** (`llm.py`): Gemini 3.5 Flash-Lite by default. If it is rate-limited or
@@ -93,33 +122,55 @@ formatting. Three layers handle that:
 | Language hint (`language.py`) | Detects the script and language of each message (Arabic script, Arabizi, French, English) and tells the model, every turn, to answer in the same one. |
 | Prompt rules | Plain sentences only, at most four; ids written exactly; never invent details; translate French terms instead of mixing scripts. |
 | Speech cleanup (`speech.py`) | Strips any leftover markdown, bullets and arrows, and fixes look-alike hyphens in ids (`L‑KAI‑001` written with U+2011). |
+| One rewrite (`agent.py`) | If a reply mixes Arabic and Latin letters in one word, or spells out an id such as DRAFT-0001 in words, the model rewrites it once with the id written exactly. |
+
+### Guardrails enforced in code
+
+Prompt rules alone did not hold in testing, so these are checked by the program:
+
+| Risk | What the code does |
+|---|---|
+| Answering from memory | A reply that names a lot id no tool returned (and the user did not type), or quotes prices or areas before any lookup, is discarded, and the turn runs again with an instruction to look the facts up. If the retry still states unverified facts, the user is asked to repeat the question instead. |
+| Inventing the applicant's details | The booking tool needs the user's own words for the name and the activity; they must appear in the conversation, may not just repeat the lot request, and placeholders like "not specified" are refused. The model is told to ask instead. |
+| Submitting on the user's behalf | No tool submits. Only `POST /requests/{draft_id}/confirm`, behind the interface's Confirm button, does. |
+| A provider failing mid-demo | Groq takes over within the same turn; `AFI_PROVIDER=replay` works with no network at all. |
 
 ## Evaluation
 
 <p align="center">
-  <img src="docs/demo/eval.gif" alt="The evaluation running 31 golden cases: 30 pass, median latency 2.4 seconds" width="760">
+  <img src="docs/demo/eval.gif" alt="The evaluation running 50 golden cases on Gemini 3.5 Flash-Lite: 47 pass, every reply passes the style checks, median 1.9 seconds" width="760">
 </p>
 
-`evals/golden.jsonl` holds **31 cases** across Tunisian Derja (both scripts), Modern Standard
-Arabic, French and English. Each case is scored twice:
+`evals/golden.jsonl` holds **50 cases** across Tunisian Derja (both scripts), Modern Standard
+Arabic, French and English, four of them multi-turn (booking "the first one" after a search,
+giving the name and the activity in separate messages). Each case is scored twice:
 
 - **Passed:** the right tool was called with the right arguments. Some cases pass only if a tool
-  is **not** called, such as preparing a request when the applicant's name is missing.
+  does **not** succeed, such as preparing a request when the applicant's name is missing. An
+  attempt the code blocked does not fail the case but is reported as "blocked".
 - **Style:** the reply is in the user's language and script, has no markdown, has no words mixing
   Arabic and Latin letters, and gives any ticket or draft id the tools returned.
 
-Latest results (15 November 2026):
+Results, 15 November 2026:
 
-| Model | Passed | Style | Median answer | Slowest 5% |
-|---|---|---|---|---|
-| Gemini 3.5 Flash-Lite (default) | 30 / 31 | 30 / 31 | 2.4 s | 4.2 s |
-| Groq `openai/gpt-oss-120b` (fallback) | 30 / 31 | 29 / 31 | 9.5 s | 19.5 s |
-| Groq `qwen/qwen3.8-27b` (13-case set) | 9 / 13 | not measured | 26 s | 30 s |
+| Model | Cases | Passed | Style | Median answer | Slowest 5% |
+|---|---|---|---|---|---|
+| Gemini 3.5 Flash-Lite (default) | 50 | 47 | 50 | 1.9 s | 3.3 s |
+| Gemini 3.5 Flash-Lite | 31 | 30 | 30 | 2.4 s | 4.2 s |
+| Groq `openai/gpt-oss-120b` (fallback) | 31 | 30 | 29 | 9.5 s | 19.5 s |
+| Groq `qwen/qwen3.8-27b` | 13 | 9 | not measured | 26 s | 30 s |
+
+About the 50-case run: its three failures were all booking attempts with a missing name or
+activity. The code blocked them, so no draft was created, but the scoring at the time counted
+any attempt. Re-run under the current scoring, the four missing-detail cases pass 4 of 4, with
+two blocked attempts. That run also predates the last two guardrails (prices and spelled-out
+ids). **A full 50-case run on the final code is still to do:** the free tier's 500 requests a
+day for this model were used up by the testing that found those problems.
 
 Groq's times are from its free tier, where queueing varies a lot from minute to minute; its
 free daily budget of about 200,000 tokens covers roughly two full runs. Neither score judges
-how natural the Derja sounds. Have a native speaker review the replies,
-which are saved with every run.
+how natural the Derja sounds. Have a native speaker review the replies, which are saved with
+every run.
 
 ```bash
 uv run --env-file .env python evals/run_eval.py --pause 2
@@ -145,6 +196,11 @@ measures exactly one model. Each case spends API quota; results, including every
 5. **Gemini as default:** Gemini needs its tool-call "thought signatures" sent back on the next
    request; the adapter now does that, and only for Gemini. Gemini matched Groq's accuracy at
    about a quarter of the latency, so it became the default with Groq as fallback.
+6. **Demo-ready:** the web interface, offline replay mode and the Neo4j-backed store. The test
+   set grew to 50 cases, four of them multi-turn. Recording the demo caught Gemini once
+   answering from memory with invented lot details; that and an invented-activity loophole led
+   to the guardrails enforced in code. A live test confirmed Groq can finish a turn Gemini
+   started.
 
 ## Quickstart
 
@@ -157,8 +213,7 @@ cp .env.example .env   # then set GEMINI_API_KEY and GROQ_API_KEY
 uv run --env-file .env uvicorn afi_agent.api:create_app --factory --reload
 ```
 
-Open http://127.0.0.1:8000/docs and try `POST /chat` with a message such as
-`نحب نحل معمل نسيج في القيروان، شنوة الأراضي الموجودة؟`.
+Open http://127.0.0.1:8000 for the interface, or http://127.0.0.1:8000/docs for the API.
 
 Free keys: Gemini from [Google AI Studio](https://aistudio.google.com), Groq from
 [console.groq.com](https://console.groq.com). Google uses free-tier Gemini data to improve its
@@ -171,28 +226,38 @@ products, so keep real investor data off the free tier.
 | `src/afi_agent/agent.py` | Agent loop and system prompt |
 | `src/afi_agent/tools.py` | The six tools, with validated inputs |
 | `src/afi_agent/store.py` | `KnowledgeStore` interface and the in-memory store |
+| `src/afi_agent/graph_store.py` | Neo4j-backed store |
 | `src/afi_agent/afizi_mock.py` | Stand-in for AFI's request back office |
 | `src/afi_agent/llm.py` | Model adapters, Groq/Gemini fallback, and a scripted model for tests |
+| `src/afi_agent/replay.py` | Offline demo mode |
 | `src/afi_agent/config.py` | Provider presets and settings from `.env` |
 | `src/afi_agent/language.py`, `speech.py` | Language detection and speech cleanup |
-| `src/afi_agent/api.py` | FastAPI app: `/chat`, `/requests/{id}/confirm`, `/health` |
+| `src/afi_agent/api.py` | FastAPI app: the interface, `/chat`, `/requests/{id}/confirm`, `/map`, `/status` |
+| `src/afi_agent/web/` | The web interface (HTML, CSS, JavaScript; no build step) |
 | `src/afi_agent/evaluation.py`, `style_checks.py`, `evals/` | Golden set and scoring |
-| `graph/`, `src/afi_agent/graph_export.py` | Neo4j schema and seed export |
+| `graph/`, `src/afi_agent/graph_export.py` | Neo4j schema, seed export and loader |
 | `scripts/` | Recording the demo conversations and rendering the GIFs |
-| `tests/` | 137 tests, all offline: no API key needed |
+| `tests/` | 187 tests, all offline: no API key needed (one needs a running Neo4j) |
 
 ## Knowledge graph
 
+The graph links zones to governorates, sectors and infrastructure, lots to zones, and
+procedures to their required documents (in order). To run the app on Neo4j, set
+`NEO4J_PASSWORD` in `.env`, then:
+
 ```bash
-uv run python -m afi_agent.graph_export graph/seed.cypher
+uv sync --extra graph
 docker compose --env-file .env up -d
-docker compose exec neo4j cypher-shell -u neo4j -p <password> -f /graph/schema.cypher
-docker compose exec neo4j cypher-shell -u neo4j -p <password> -f /graph/seed.cypher
+uv run --env-file .env python -m afi_agent.graph_export load
 ```
 
-The graph links zones to governorates, sectors and infrastructure, lots to zones, and
-procedures to required documents. The agent still reads from the in-memory store; a
-Neo4j-backed store only has to implement the `KnowledgeStore` interface.
+Then set `AFI_STORE=neo4j` in `.env` and start the app. Neo4j is the source of truth: the app
+reads the graph at startup and writes reservations back to it, which you can watch in the
+Neo4j browser at http://localhost:7474. `python -m afi_agent.graph_export graph/seed.cypher`
+writes the same data as a Cypher file instead.
+
+The Neo4j store is tested against a stand-in session. The round trip through a real database
+(`tests/test_graph_store.py`) runs only when `NEO4J_PASSWORD` is set, and has not been run yet.
 
 ## Rebuilding the animations
 
@@ -208,16 +273,19 @@ The first command records real conversations (it spends API quota). The second r
 
 - **Placeholder data:** all lots, prices and procedures are invented.
 - **Derja quality is unreviewed:** Arabic-script replies often lean towards formal Arabic.
-- **Invented activity:** Gemini sometimes fills in a generic activity when the user gave none.
-  The draft is still shown for confirmation, but the rule does not always hold.
-- **Mixed-script words** such as "أavis" still appear occasionally; the style check catches them.
-- **The live switch to Groq is untested.** The fallback is covered by unit tests only.
+- **The grounding check is a heuristic.** It catches lot ids no tool returned and prices or
+  areas quoted before any lookup, but not a wrong price given after a correct lookup.
+- **Free-tier limits:** Gemini 3.5 Flash-Lite allows 15 requests a minute and 500 a day, and
+  Groq about 200,000 tokens a day. A day of rehearsals can use up the default model before a
+  demo; the fallback, the offline mode or a paid key cover that.
+- **Offline mode only knows the recorded questions,** and its replies quote the draft and
+  tracking numbers from the recording.
+- **Neo4j has not run against a real database yet** (see above).
 
 ## Not built yet
 
-- Speech-to-text and text-to-speech (Groq offers `whisper-large-v3` on its free tier)
-- Neo4j-backed `KnowledgeStore`
-- Web interface: chat, push-to-talk and map
+- Derja speech-to-text and text-to-speech: the interface uses the browser's voice until the
+  models are compared on recorded Derja questions (Groq offers `whisper-large-v3` for free)
 - Real AFI data
 
 ## Context

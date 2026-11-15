@@ -5,7 +5,7 @@ whether the reply is speakable: right script, right language, no markdown, refer
 
 import json
 from collections.abc import Callable
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -27,6 +27,8 @@ class GoldenCase(BaseModel):
     expected_tool: str | None
     expected_args: dict[str, Any] = {}
     forbidden_tools: list[str] = []
+    # Earlier user messages, sent through the agent first. Only the last turn is scored.
+    history: list[str] = []
 
 
 @dataclass(frozen=True)
@@ -38,6 +40,8 @@ class CaseResult:
     called: list[str]
     latency_ms: float
     error: str | None = None
+    # Forbidden tools the model tried that the code refused.
+    blocked: list[str] = field(default_factory=list)
     script_ok: bool = False
     language_ok: bool = False
     # Checked on the model's raw text, before the speech cleanup, to track prompt compliance.
@@ -82,8 +86,12 @@ def args_match(
 def score_case(
     case: GoldenCase, reply: AgentReply, canonicalize: Canonicalize | None = None
 ) -> CaseResult:
-    called = {r.name for r in reply.tool_records}
-    no_forbidden = not called & set(case.forbidden_tools)
+    forbidden = set(case.forbidden_tools)
+    # A forbidden call the code rejected (e.g. a booking without the user's own details) did
+    # nothing, so it does not fail the case; it is still counted under `blocked`.
+    succeeded = {r.name for r in reply.tool_records if not r.is_error}
+    blocked = sorted({r.name for r in reply.tool_records if r.is_error and r.name in forbidden})
+    no_forbidden = not succeeded & forbidden
     if case.expected_tool is None:
         tool_ok, args_ok = no_forbidden, True
     else:
@@ -97,6 +105,7 @@ def score_case(
         args_ok=args_ok,
         called=[r.name for r in reply.tool_records],
         latency_ms=reply.latency_ms,
+        blocked=blocked,
         script_ok=style_checks.script_ok(case.lang, reply.text),
         language_ok=style_checks.language_ok(case.lang, reply.text),
         markdown_free=not style_checks.has_markdown(reply.raw_text),
@@ -109,14 +118,15 @@ def score_case(
 
 def run_cases(
     cases: list[GoldenCase],
-    ask: Callable[[str], AgentReply],
+    ask: Callable[[GoldenCase], AgentReply],
     canonicalize: Canonicalize | None = None,
 ) -> list[CaseResult]:
-    """`ask` answers one question in a fresh session."""
+    """`ask` plays a case's history and question in a fresh session and returns the reply to
+    the question."""
     results = []
     for case in cases:
         try:
-            results.append(score_case(case, ask(case.question), canonicalize))
+            results.append(score_case(case, ask(case), canonicalize))
         except Exception as exc:  # one failing case must not lose the rest of a paid run
             results.append(
                 CaseResult(
@@ -162,6 +172,7 @@ def summarize(results: list[CaseResult]) -> dict[str, Any]:
         "latency_ms_p50": _percentile(latencies, 0.5) if latencies else None,
         "latency_ms_p95": _percentile(latencies, 0.95) if latencies else None,
         "errors": sum(r.error is not None for r in results),
+        "blocked_attempts": sum(len(r.blocked) for r in results),
     }
 
 

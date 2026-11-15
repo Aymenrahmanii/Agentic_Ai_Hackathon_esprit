@@ -26,7 +26,7 @@ PROVIDER_PRESETS = {
 }
 
 # For AFI_PROVIDER=openai_compat (any endpoint, set AFI_BASE_URL) or anthropic.
-_DEFAULT_MODELS = {"openai_compat": "", "anthropic": "claude-opus-5-5"}
+_DEFAULT_MODELS = {"openai_compat": "", "anthropic": "claude-opus-5-5", "replay": "replay"}
 
 
 @dataclass(frozen=True)
@@ -41,6 +41,10 @@ class Settings:
     seed_path: Path
     # Preset name used when the primary provider is rate-limited or down; None disables it.
     fallback_provider: str | None = None
+    # Recorded conversations answered by AFI_PROVIDER=replay (offline demo mode).
+    replay_path: Path = PROJECT_ROOT / "docs" / "demo" / "conversations.json"
+    # Where zones, lots and procedures come from: "memory" (data/seed.json) or "neo4j".
+    store: str = "memory"
 
 
 def with_provider_preset(settings: Settings, name: str) -> Settings:
@@ -74,9 +78,10 @@ def load_settings() -> Settings:
         max_agent_steps=int(os.environ.get("AFI_MAX_AGENT_STEPS", "6")),
         seed_path=Path(os.environ.get("AFI_SEED_PATH", PROJECT_ROOT / "data" / "seed.json")),
         fallback_provider=os.environ.get("AFI_FALLBACK_PROVIDER", "groq") or None,
+        store=os.environ.get("AFI_STORE", "memory"),
     )
     if provider in PROVIDER_PRESETS:
         settings = with_provider_preset(settings, provider)
-    if settings.fallback_provider == provider:
+    if settings.fallback_provider == provider or provider == "replay":
         settings = replace(settings, fallback_provider=None)
     return settings

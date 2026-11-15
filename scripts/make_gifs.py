@@ -257,9 +257,9 @@ def eval_frames(results: dict, model: str) -> Iterator[tuple[Image.Image, int]]:
         draw.rectangle([0, 0, WIDTH, 32], fill=COLORS["header"])
         for i, color in enumerate(((248, 113, 113), (250, 204, 21), (74, 222, 128))):
             draw.ellipse([14 + i * 20, 10, 26 + i * 20, 22], fill=color)
-        draw.text(
-            (80, 7), "golden set: 31 cases, 5 languages", font=FONT_SMALL, fill=COLORS["muted"]
-        )
+        languages = len({case["lang"] for case in cases})
+        header = f"golden set: {len(cases)} cases, {languages} language variants"
+        draw.text((80, 7), header, font=FONT_SMALL, fill=COLORS["muted"])
         for i, (text, color) in enumerate(lines[-rows:]):
             draw.text((PAD, 44 + i * 22), text, font=MONO, fill=color)
         return image

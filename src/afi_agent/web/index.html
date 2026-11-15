@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Assistant foncier AFI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Readex+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="data-banner" id="data-banner" hidden>
+    Données de démonstration : les zones, lots et prix affichés sont inventés, ce ne sont pas des informations de l'AFI.
+  </div>
+
+  <div class="app">
+    <section class="conversation" aria-label="Conversation">
+      <header class="conversation-head">
+        <div>
+          <h1>Assistant foncier AFI</h1>
+          <p class="subtitle">Terrains industriels, procédures et demandes, en derja, français, العربية ou English.</p>
+        </div>
+        <span class="model-badge" id="model-badge" title="Modèle qui répond">…</span>
+      </header>
+
+      <ol class="messages" id="messages" aria-live="polite">
+        <li class="empty" id="empty">
+          <p>Posez votre question comme au guichet de l'AFI. Par exemple :</p>
+          <div class="examples">
+            <button type="button" class="example" dir="auto">نحب نحل معمل نسيج في القيروان، شنوة الأراضي الموجودة؟</button>
+            <button type="button" class="example" dir="auto">Quels documents faut-il pour réserver un lot ?</button>
+            <button type="button" class="example" dir="auto">Is there any land for a food processing plant under 200,000 dinars?</button>
+          </div>
+        </li>
+      </ol>
+
+      <form class="composer" id="composer">
+        <div class="composer-row">
+          <button type="button" class="mic" id="mic" aria-pressed="false" title="Parlez votre question">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-2.08A7 7 0 0 0 19 12h-2Z"/></svg>
+            <span class="visually-hidden">Parler</span>
+          </button>
+          <label class="visually-hidden" for="input">Votre message</label>
+          <textarea id="input" rows="1" dir="auto" placeholder="Écrivez ou parlez… / اكتب أو تكلّم…" autocomplete="off"></textarea>
+          <button type="submit" class="send" id="send">Envoyer</button>
+        </div>
+        <div class="composer-options">
+          <label>Langue du micro
+            <select id="speech-lang">
+              <option value="ar-TN">Derja / العربية</option>
+              <option value="fr-FR">Français</option>
+              <option value="en-US">English</option>
+            </select>
+          </label>
+          <label class="toggle"><input type="checkbox" id="speak-replies"> Lire les réponses à voix haute</label>
+          <span class="voice-note">Voix du navigateur pour l'instant, en attendant le choix des modèles vocaux en derja.</span>
+        </div>
+      </form>
+    </section>
+
+    <section class="land" aria-label="Terrains industriels">
+      <div class="map-wrap">
+        <div id="map" role="img" aria-label="Carte des zones industrielles"></div>
+        <p class="map-offline" id="map-offline" hidden>La carte a besoin d'une connexion internet. Les parcelles ci-dessous restent disponibles.</p>
+        <ul class="legend" aria-label="Statut des lots">
+          <li><span class="swatch available"></span>Disponible</li>
+          <li><span class="swatch reserved"></span>Réservé</li>
+          <li><span class="swatch sold"></span>Vendu</li>
+        </ul>
+      </div>
+
+      <div class="plots">
+        <h2>Parcelles</h2>
+        <p class="plots-hint" id="plots-hint">Les parcelles trouvées par l'assistant s'affichent ici, dessinées à l'échelle de leur surface.</p>
+        <div class="plot-zones" id="plot-zones"></div>
+      </div>
+
+      <details class="trace" id="trace" open>
+        <summary>Ce que l'agent a fait</summary>
+        <p class="trace-empty" id="trace-empty">Pour chaque réponse, les outils utilisés par l'agent et ce qu'ils ont renvoyé.</p>
+        <ol class="trace-steps" id="trace-steps"></ol>
+      </details>
+    </section>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>

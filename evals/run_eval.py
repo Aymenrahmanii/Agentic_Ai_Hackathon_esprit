@@ -13,7 +13,7 @@ from typing import Any
 from afi_agent.afizi_mock import AfiziMock
 from afi_agent.agent import Agent, AgentReply
 from afi_agent.config import PROVIDER_PRESETS, load_settings, with_provider_preset
-from afi_agent.evaluation import load_cases, results_to_json, run_cases, summarize
+from afi_agent.evaluation import GoldenCase, load_cases, results_to_json, run_cases, summarize
 from afi_agent.llm import LLMError, build_llm
 from afi_agent.store import InMemoryStore
 from afi_agent.tools import ToolContext
@@ -54,17 +54,27 @@ def main() -> None:
     reference_store = InMemoryStore.from_file(settings.seed_path)
     first_case = True
 
-    def ask(question: str) -> AgentReply:
+    def play(case: GoldenCase) -> AgentReply:
+        # Fresh store and back office per case so one case cannot affect the next.
+        store = InMemoryStore.from_file(settings.seed_path)
+        agent = Agent(
+            llm,
+            ToolContext(store=store, afizi=AfiziMock(store)),
+            max_steps=settings.max_agent_steps,
+        )
+        messages: list[dict[str, Any]] = []
+        for earlier in case.history:
+            agent.respond(messages, earlier)
+        return agent.respond(messages, case.question)
+
+    def ask(case: GoldenCase) -> AgentReply:
         nonlocal first_case
         if args.pause and not first_case:
             time.sleep(args.pause)
         first_case = False
         for attempt in range(1, RETRIES + 1):
-            # Fresh store and back office per case so one case cannot affect the next.
-            store = InMemoryStore.from_file(settings.seed_path)
-            ctx = ToolContext(store=store, afizi=AfiziMock(store))
             try:
-                return Agent(llm, ctx, max_steps=settings.max_agent_steps).respond([], question)
+                return play(case)
             except LLMError as exc:
                 if not exc.retryable or attempt == RETRIES:
                     raise
@@ -102,6 +112,8 @@ def main() -> None:
             if not ok
         ]
         style = "style ok" if not style_flags else "style: " + ", ".join(style_flags)
+        if r.blocked:
+            style += f"  (blocked: {', '.join(r.blocked)})"
         if r.error:
             style = ""
         print(f"{mark}  {r.case_id:<24} {r.latency_ms:>7.0f} ms  {detail:<20} {style}")
@@ -113,6 +125,7 @@ def main() -> None:
         f"language {summary['language_ok']}, references {summary['references_ok']}); "
         f"raw replies without markdown: {summary['markdown_free_raw']}"
     )
+    print(f"forbidden tool calls blocked by the code: {summary['blocked_attempts']}")
     print(f"latency p50={summary['latency_ms_p50']} ms  p95={summary['latency_ms_p95']} ms")
 
     out_dir = EVALS_DIR / "results"

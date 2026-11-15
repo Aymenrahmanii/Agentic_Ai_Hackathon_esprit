@@ -17,8 +17,8 @@
               "is_error": false
             }
           ],
-          "reply": "لقيت زوج مقاسم في ولاية القيروان تناسب قطاع النسيج. المقسم الأول برمز L-KAI-001 مساحتو ألفين متر مربع وبثمن تسعين ألف دينار. والمقسم الثاني برمز L-KAI-002 مساحتو خمسة آلاف ومائتين متر مربع وبثمن مائتين وأربعة وثلاثين ألف دينار.",
-          "latency_ms": 1885,
+          "reply": "لقينا مقطع أرض برمز L-KAI-001 مساحته ألفين متر مربع وبسعر تسعين ألف دينار في منطقة القيروان الجنوبية. ولقينا مقطع آخر برمز L-KAI-002 مساحته خمسة آلاف ومئتا متر مربع وبسعر مئتين وربعة وثلاثين ألف دينار في نفس المنطقة. الزوز مقاطع مناسبين للنسيج. إذا تحب تحضر طلب، عطيني اسمك الكامل وصفتك باش نجموا نكملوا.",
+          "latency_ms": 2649,
           "pending_draft": null
         },
         {
@@ -27,15 +27,17 @@
             {
               "name": "prefill_request",
               "input": {
+                "activity": "نسيج",
                 "lot_id": "L-KAI-001",
+                "applicant_name_quote": "إسمي سامي",
                 "applicant_name": "سامي",
-                "activity": "نسيج"
+                "activity_quote": "النشاط متاعي نسيج"
               },
               "is_error": false
             }
           ],
-          "reply": "حضرتلك مطلب حجز بالمرجع DRAFT-0001 للمقسم برمز L-KAI-001 باسم سامي للنشاط نسيج. يرجى مراجعة التفاصيل وتأكيد الطلب على الشاشة.",
-          "latency_ms": 1934,
+          "reply": "حضرتلك مطلب برمز DRAFT-0001 لحجز مقطع الأرض برمز L-KAI-001 باسم سامي لنشاط نسيج. يرجى تفقد المعطيات وتأكيد الطلب على الشاشة.",
+          "latency_ms": 2331,
           "pending_draft": "DRAFT-0001",
           "confirmed": "DEMO-0001"
         }
@@ -56,8 +58,8 @@
               "is_error": false
             }
           ],
-          "reply": "Famma lot L-SFX-001 fi Sfax Nord b meseha 1500 metrou marba3 w soumo 180 alf dinar. Famma zada lot L-SFX-002 b 8000 metrou marba3 w soumo 880 alf dinar. Ken t7eb tnajjem t9olli chnowa 5demtek bech nchouflok el ardh elli twalmek.",
-          "latency_ms": 1940,
+          "reply": "Fama lot ra9m L-SFX-001 bi mesahat alf w khamsa miya metr morabba w soumo mya w themanin alf dinar.w fama lot ra9m L-SFX-002 bi mesahat themanya alef metr morabba w soumo themanya miya w themanin alf dinar.zouj fel manta9a esmha Zone industrielle Sfax Nord (exemple).ki t7eb na3mlek draft mte3 talab, aatini esmek w ennchat eli t7eb t3mlo.",
+          "latency_ms": 3630,
           "pending_draft": null
         },
         {
@@ -71,8 +73,8 @@
               "is_error": false
             }
           ],
-          "reply": "Pour réserver un lot, il faut fournir un formulaire de demande sur modèle AFI, une copie de la pièce d'identité du promoteur, ainsi que les statuts de la société ou un extrait du registre national des entreprises. Il est également nécessaire de joindre une étude sommaire du projet.",
-          "latency_ms": 1919,
+          "reply": "Pour réserver un lot, il faut le formulaire de demande AFI, une copie de la pièce d'identité du promoteur, les statuts de la société ou un extrait du registre national des entreprises, ainsi qu'une étude sommaire du projet.",
+          "latency_ms": 1496,
           "pending_draft": null
         },
         {
@@ -81,14 +83,14 @@
             {
               "name": "search_lots",
               "input": {
-                "sector": "agroalimentaire",
-                "max_price_tnd": 200000
+                "max_price_tnd": 200000,
+                "sector": "agroalimentaire"
               },
               "is_error": false
             }
           ],
-          "reply": "I found two available lots for a food processing plant under 200,000 dinars. One is in Sidi Bouzid Ouest with an area of 4,000 square meters for 100,000 dinars. The other is in Sfax Nord with an area of 1,500 square meters for 180,000 dinars. Would you like to reserve one of these lots?",
-          "latency_ms": 2154,
+          "reply": "We found a 4000 square metre lot in Sidi Bouzid Ouest for 100000 dinars. We also found a 1500 square metre lot in Sfax Nord for 180000 dinars. Both suits for food processing plants. Would you like to reserve one of them?",
+          "latency_ms": 1595,
           "pending_draft": null
         }
       ]
@@ -100,15 +102,15 @@
         {
           "user": "Réservez-moi le lot L-KAI-002.",
           "tool_calls": [],
-          "reply": "Pour réserver le lot L-KAI-002, j'ai besoin de votre nom complet et de la nature de votre activité. Veuillez me les communiquer pour que je puisse préparer votre demande.",
-          "latency_ms": 681,
+          "reply": "Pour réserver le lot L-KAI-002, j'ai besoin de connaître votre nom et votre activité précise. Quel est votre nom et que prévoyez-vous de produire sur ce terrain ?",
+          "latency_ms": 792,
           "pending_draft": null
         },
         {
           "user": "What's the weather going to be like in Tunis tomorrow?",
           "tool_calls": [],
-          "reply": "I can only help you with AFI industrial land services, such as finding industrial lots and checking reservation procedures.",
-          "latency_ms": 652,
+          "reply": "I can only help you with AFI industrial land services, such as finding industrial lots and checking procedures.",
+          "latency_ms": 647,
           "pending_draft": null
         },
         {
@@ -122,8 +124,8 @@
               "is_error": false
             }
           ],
-          "reply": "I have transferred your request to a human AFI agent with reference TICKET-0001. Someone will be in touch with you shortly.",
-          "latency_ms": 1953,
+          "reply": "I have created ticket reference TICKET-0001 to connect you with a human AFI agent. An agent will be with you shortly.",
+          "latency_ms": 1653,
           "pending_draft": null
         }
       ]
