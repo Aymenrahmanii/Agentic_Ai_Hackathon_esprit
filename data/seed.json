@@ -1,0 +1,103 @@
+{
+  "synthetic": true,
+  "note": "Placeholder data invented for development. Zone names, lots, prices and procedures are NOT real AFI data. Replace with data collected from AFI's public pages before any demo.",
+  "governorates": [
+    {"name": "Kairouan", "aliases": ["القيروان", "قيروان", "kairawan", "9irwen", "9ayrawen", "kairouen"]},
+    {"name": "Sfax", "aliases": ["صفاقس", "sfe9es", "safe9es", "sfaks"]},
+    {"name": "Béja", "aliases": ["باجة", "beja", "bega", "beja"]},
+    {"name": "Sidi Bouzid", "aliases": ["سيدي بوزيد", "sidi bou zid", "sidibouzid"]}
+  ],
+  "zones": [
+    {
+      "id": "ZI-KAI-01",
+      "name": "Zone industrielle Kairouan Sud (exemple)",
+      "governorate": "Kairouan",
+      "area_ha": 42.0,
+      "sectors": ["textile", "agroalimentaire"],
+      "infrastructure": ["electricite_moyenne_tension", "eau_potable", "assainissement", "gaz_naturel"],
+      "regional_development_zone": true,
+      "lat": 35.65,
+      "lon": 10.1
+    },
+    {
+      "id": "ZI-SFX-01",
+      "name": "Zone industrielle Sfax Nord (exemple)",
+      "governorate": "Sfax",
+      "area_ha": 65.0,
+      "sectors": ["mecanique", "plasturgie", "agroalimentaire"],
+      "infrastructure": ["electricite_moyenne_tension", "eau_potable", "assainissement", "fibre_optique"],
+      "regional_development_zone": false,
+      "lat": 34.8,
+      "lon": 10.75
+    },
+    {
+      "id": "ZI-BEJ-01",
+      "name": "Zone industrielle Béja Est (exemple)",
+      "governorate": "Béja",
+      "area_ha": 30.0,
+      "sectors": ["agroalimentaire", "textile"],
+      "infrastructure": ["electricite_moyenne_tension", "eau_potable", "assainissement"],
+      "regional_development_zone": true,
+      "lat": 36.72,
+      "lon": 9.18
+    },
+    {
+      "id": "ZI-SBZ-01",
+      "name": "Zone industrielle Sidi Bouzid Ouest (exemple)",
+      "governorate": "Sidi Bouzid",
+      "area_ha": 50.0,
+      "sectors": ["agroalimentaire", "materiaux_de_construction"],
+      "infrastructure": ["electricite_moyenne_tension", "eau_potable"],
+      "regional_development_zone": true,
+      "lat": 35.04,
+      "lon": 9.48
+    }
+  ],
+  "lots": [
+    {"id": "L-KAI-001", "zone_id": "ZI-KAI-01", "area_m2": 2000, "price_tnd_per_m2": 45, "status": "available"},
+    {"id": "L-KAI-002", "zone_id": "ZI-KAI-01", "area_m2": 5200, "price_tnd_per_m2": 45, "status": "available"},
+    {"id": "L-KAI-003", "zone_id": "ZI-KAI-01", "area_m2": 3500, "price_tnd_per_m2": 45, "status": "sold"},
+    {"id": "L-SFX-001", "zone_id": "ZI-SFX-01", "area_m2": 1500, "price_tnd_per_m2": 120, "status": "available"},
+    {"id": "L-SFX-002", "zone_id": "ZI-SFX-01", "area_m2": 8000, "price_tnd_per_m2": 110, "status": "available"},
+    {"id": "L-BEJ-001", "zone_id": "ZI-BEJ-01", "area_m2": 6000, "price_tnd_per_m2": 40, "status": "available"},
+    {"id": "L-BEJ-002", "zone_id": "ZI-BEJ-01", "area_m2": 3000, "price_tnd_per_m2": 40, "status": "reserved"},
+    {"id": "L-SBZ-001", "zone_id": "ZI-SBZ-01", "area_m2": 10000, "price_tnd_per_m2": 25, "status": "available"},
+    {"id": "L-SBZ-002", "zone_id": "ZI-SBZ-01", "area_m2": 4000, "price_tnd_per_m2": 25, "status": "available"}
+  ],
+  "procedures": [
+    {
+      "id": "reservation_lot",
+      "title": "Réservation d'un lot industriel (contenu provisoire)",
+      "verified": false,
+      "steps": [
+        "Choisir un lot disponible sur la carte interactive",
+        "Déposer la demande accompagnée des pièces requises",
+        "Étude du dossier par l'AFI",
+        "Notification de la décision et paiement",
+        "Signature du contrat"
+      ],
+      "documents": [
+        "Formulaire de demande (modèle AFI)",
+        "Copie de la pièce d'identité du promoteur",
+        "Statuts de la société ou extrait du registre national des entreprises",
+        "Étude sommaire du projet"
+      ]
+    },
+    {
+      "id": "vente_aux_encheres",
+      "title": "Participation à une vente aux enchères de lots (contenu provisoire)",
+      "verified": false,
+      "steps": [
+        "Consulter l'avis de vente publié par l'AFI",
+        "Retirer le cahier des charges",
+        "Déposer l'offre avant la date limite",
+        "Séance d'adjudication"
+      ],
+      "documents": [
+        "Cahier des charges signé",
+        "Copie de la pièce d'identité du promoteur",
+        "Justificatif de caution"
+      ]
+    }
+  ]
+}

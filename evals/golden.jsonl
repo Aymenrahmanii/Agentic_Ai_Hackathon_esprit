@@ -1,0 +1,13 @@
+{"id": "derja-ar-search", "lang": "derja-ar", "question": "نحب نحل معمل نسيج في القيروان، شنوة الأراضي الموجودة؟", "expected_tool": "search_lots", "expected_args": {"governorate": "Kairouan"}}
+{"id": "arabizi-search", "lang": "derja-latin", "question": "n7eb nechri ardh sina3iya fi sfax, chnowa mawjoud?", "expected_tool": "search_lots", "expected_args": {"governorate": "Sfax"}}
+{"id": "fr-search-filters", "lang": "fr", "question": "Je cherche un terrain de plus de 5000 m² à Béja pour moins de 300 000 dinars.", "expected_tool": "search_lots", "expected_args": {"governorate": "Béja", "min_area_m2": 5000, "max_price_tnd": 300000}}
+{"id": "en-compare", "lang": "en", "question": "Compare the industrial zones in Kairouan and Sidi Bouzid.", "expected_tool": "compare_zones", "expected_args": {"places": ["Kairouan", "Sidi Bouzid"]}}
+{"id": "fr-procedure", "lang": "fr", "question": "Quels documents faut-il pour réserver un lot ?", "expected_tool": "get_procedure", "expected_args": {"procedure_id": "reservation_lot"}}
+{"id": "msa-procedure", "lang": "ar", "question": "ما هي الوثائق المطلوبة لحجز مقسم صناعي؟", "expected_tool": "get_procedure", "expected_args": {"procedure_id": "reservation_lot"}}
+{"id": "derja-ar-procedure", "lang": "derja-ar", "question": "شنوة الأوراق اللي لازمني باش نحجز أرض صناعية؟", "expected_tool": "get_procedure", "expected_args": {"procedure_id": "reservation_lot"}}
+{"id": "fr-auction", "lang": "fr", "question": "Comment participer à une vente aux enchères de lots ?", "expected_tool": "get_procedure", "expected_args": {"procedure_id": "vente_aux_encheres"}}
+{"id": "derja-ar-track", "lang": "derja-ar", "question": "وين وصل الملف متاعي؟ الرقم DEMO-0001", "expected_tool": "track_dossier", "expected_args": {"tracking_number": "DEMO-0001"}}
+{"id": "fr-track", "lang": "fr", "question": "Où en est mon dossier DEMO-0001 ?", "expected_tool": "track_dossier", "expected_args": {"tracking_number": "DEMO-0001"}}
+{"id": "derja-ar-escalate", "lang": "derja-ar", "question": "نحب نحكي مع موظف من الوكالة", "expected_tool": "escalate_to_human", "expected_args": {}}
+{"id": "en-escalate", "lang": "en", "question": "I want to talk to a human agent.", "expected_tool": "escalate_to_human", "expected_args": {}}
+{"id": "arabizi-prefill", "lang": "derja-latin", "question": "7ajezli el lot L-KAI-001, esmi Sami Trabelsi w el nachat mte3i textile", "expected_tool": "prefill_request", "expected_args": {"lot_id": "L-KAI-001"}}
