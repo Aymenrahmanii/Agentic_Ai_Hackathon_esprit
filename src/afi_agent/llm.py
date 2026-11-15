@@ -2,14 +2,15 @@
 tool_result blocks); each adapter translates that shape to its provider inside `complete`."""
 
 import json
-from collections.abc import Sequence
+import time
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field
 from typing import Any, Protocol
 
 import anthropic
 import openai
 
-from afi_agent.config import Settings
+from afi_agent.config import GEMINI_BASE_URL, Settings, with_provider_preset
 
 _ANTHROPIC_DEFAULT_MAX_TOKENS = 16000
 
@@ -30,6 +31,9 @@ class ToolCall:
     id: str
     name: str
     input: dict[str, Any]
+    # Provider data that must be sent back with the call on the next request, e.g. Gemini's
+    # {"google": {"thought_signature": ...}}; without it Gemini rejects the follow-up with a 400.
+    extra_content: dict[str, Any] | None = None
 
 
 @dataclass(frozen=True)
@@ -55,10 +59,17 @@ class LLM(Protocol):
 
 def _content_blocks(text: str, tool_calls: Sequence[ToolCall]) -> list[dict[str, Any]]:
     blocks: list[dict[str, Any]] = [{"type": "text", "text": text}] if text else []
-    blocks.extend(
-        {"type": "tool_use", "id": call.id, "name": call.name, "input": call.input}
-        for call in tool_calls
-    )
+    for call in tool_calls:
+        block: dict[str, Any] = {
+            "type": "tool_use",
+            "id": call.id,
+            "name": call.name,
+            "input": call.input,
+        }
+        # Only the OpenAI-compatible adapter produces and reads this key.
+        if call.extra_content:
+            block["extra_content"] = call.extra_content
+        blocks.append(block)
     return blocks
 
 
@@ -123,14 +134,16 @@ def to_openai_tools(tools: list[dict[str, Any]]) -> list[dict[str, Any]]:
     ]
 
 
-def to_openai_messages(system: str, messages: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def to_openai_messages(
+    system: str, messages: list[dict[str, Any]], *, send_extra_content: bool = True
+) -> list[dict[str, Any]]:
     converted: list[dict[str, Any]] = [{"role": "system", "content": system}]
     for message in messages:
         content = message["content"]
         if isinstance(content, str):
             converted.append({"role": message["role"], "content": content})
         elif message["role"] == "assistant":
-            converted.append(_assistant_to_openai(content))
+            converted.append(_assistant_to_openai(content, send_extra_content))
         else:
             converted.extend(
                 {"role": "tool", "tool_call_id": block["tool_use_id"], "content": block["content"]}
@@ -140,10 +153,13 @@ def to_openai_messages(system: str, messages: list[dict[str, Any]]) -> list[dict
     return converted
 
 
-def _assistant_to_openai(blocks: list[dict[str, Any]]) -> dict[str, Any]:
+def _assistant_to_openai(blocks: list[dict[str, Any]], send_extra_content: bool) -> dict[str, Any]:
     text = "".join(block["text"] for block in blocks if block["type"] == "text")
-    tool_calls = [
-        {
+    tool_calls = []
+    for block in blocks:
+        if block["type"] != "tool_use":
+            continue
+        call: dict[str, Any] = {
             "id": block["id"],
             "type": "function",
             "function": {
@@ -151,13 +167,22 @@ def _assistant_to_openai(blocks: list[dict[str, Any]]) -> dict[str, Any]:
                 "arguments": json.dumps(block["input"], ensure_ascii=False),
             },
         }
-        for block in blocks
-        if block["type"] == "tool_use"
-    ]
+        if send_extra_content and block.get("extra_content"):
+            call["extra_content"] = block["extra_content"]
+        tool_calls.append(call)
     message: dict[str, Any] = {"role": "assistant", "content": text or None}
     if tool_calls:
         message["tool_calls"] = tool_calls
     return message
+
+
+TOOL_CALL_RETRIES = 2
+_MALFORMED_TOOL_CALL_MARKERS = ("tool_use_failed", "tool call validation failed", "parse tool call")
+
+
+def _is_malformed_tool_call(exc: openai.BadRequestError) -> bool:
+    body = f"{exc.message} {exc.body}".casefold()
+    return any(marker in body for marker in _MALFORMED_TOOL_CALL_MARKERS)
 
 
 def _parse_arguments(raw: str) -> dict[str, Any]:
@@ -180,23 +205,40 @@ class OpenAICompatLLM:
         api_key: str,
         max_tokens: int | None = None,
         client: openai.OpenAI | None = None,
+        send_extra_content: bool = True,
     ) -> None:
         self._client = client or openai.OpenAI(base_url=base_url, api_key=api_key)
         self._model = model
         self._max_tokens = max_tokens
+        # Gemini's tool-call signatures must go back to Gemini, and only there: a transcript
+        # started on Gemini may finish on the backup provider.
+        self._send_extra_content = send_extra_content
+
+    def _create_with_tool_retry(self, request: dict[str, Any]) -> Any:
+        # Some providers (Groq) validate tool calls server-side and answer 400 when the model
+        # emits malformed arguments. A fresh sample usually succeeds, so retry before failing.
+        for attempt in range(TOOL_CALL_RETRIES + 1):
+            try:
+                return self._client.chat.completions.create(**request)
+            except openai.BadRequestError as exc:
+                if attempt == TOOL_CALL_RETRIES or not _is_malformed_tool_call(exc):
+                    raise
+        raise AssertionError("unreachable")
 
     def complete(
         self, *, system: str, messages: list[dict[str, Any]], tools: list[dict[str, Any]]
     ) -> LLMTurn:
         request: dict[str, Any] = {
             "model": self._model,
-            "messages": to_openai_messages(system, messages),
+            "messages": to_openai_messages(
+                system, messages, send_extra_content=self._send_extra_content
+            ),
             "tools": to_openai_tools(tools),
         }
         if self._max_tokens is not None:
             request["max_completion_tokens"] = self._max_tokens
         try:
-            response = self._client.chat.completions.create(**request)
+            response = self._create_with_tool_retry(request)
         except openai.RateLimitError as exc:
             raise LLMError("Rate limited by the model provider", retryable=True) from exc
         except openai.APIStatusError as exc:
@@ -214,6 +256,7 @@ class OpenAICompatLLM:
                 id=call.id,
                 name=call.function.name,
                 input=_parse_arguments(call.function.arguments),
+                extra_content=(call.model_extra or {}).get("extra_content"),
             )
             for call in choice.message.tool_calls or []
             if call.type == "function"
@@ -226,24 +269,77 @@ class OpenAICompatLLM:
         )
 
 
-def build_llm(settings: Settings) -> LLM:
+class FallbackLLM:
+    """Use `primary`; on a retryable failure (rate limit, outage, network) answer with `backup`.
+
+    After a fallback, the backup keeps serving for `cooldown_s`, so the rest of the turn stays
+    on one provider and a rate-limited primary is not hammered on every call."""
+
+    def __init__(
+        self,
+        primary: LLM,
+        backup: LLM,
+        *,
+        cooldown_s: float = 60.0,
+        clock: Callable[[], float] = time.monotonic,
+    ) -> None:
+        self._primary = primary
+        self._backup = backup
+        self._cooldown_s = cooldown_s
+        self._clock = clock
+        self._backup_until = float("-inf")
+
+    @property
+    def using_backup(self) -> bool:
+        return self._clock() < self._backup_until
+
+    def complete(
+        self, *, system: str, messages: list[dict[str, Any]], tools: list[dict[str, Any]]
+    ) -> LLMTurn:
+        if not self.using_backup:
+            try:
+                return self._primary.complete(system=system, messages=messages, tools=tools)
+            except LLMError as exc:
+                if not exc.retryable:
+                    raise
+                self._backup_until = self._clock() + self._cooldown_s
+        return self._backup.complete(system=system, messages=messages, tools=tools)
+
+
+def _build_single(settings: Settings) -> LLM:
     if settings.provider == "anthropic":
         return AnthropicLLM(
             model=settings.model, effort=settings.effort, max_tokens=settings.max_tokens
         )
     if settings.provider == "openai_compat":
         if not settings.api_key:
-            raise LLMError("AFI_API_KEY is not set", retryable=False)
+            raise LLMError(
+                f"No API key for {settings.base_url or 'the model provider'}: set "
+                "GEMINI_API_KEY or GROQ_API_KEY (or AFI_API_KEY with AFI_PROVIDER=openai_compat)",
+                retryable=False,
+            )
         return OpenAICompatLLM(
             model=settings.model,
             base_url=settings.base_url,
             api_key=settings.api_key,
             max_tokens=settings.max_tokens,
+            send_extra_content=settings.base_url == GEMINI_BASE_URL,
         )
     raise LLMError(
-        f"Unknown AFI_PROVIDER '{settings.provider}' (use openai_compat or anthropic)",
+        f"Unknown AFI_PROVIDER '{settings.provider}' "
+        "(use gemini, groq, openai_compat or anthropic)",
         retryable=False,
     )
+
+
+def build_llm(settings: Settings) -> LLM:
+    primary = _build_single(settings)
+    if not settings.fallback_provider:
+        return primary
+    backup_settings = with_provider_preset(settings, settings.fallback_provider)
+    if not backup_settings.api_key:
+        return primary  # no key for the backup provider: run without a fallback
+    return FallbackLLM(primary, _build_single(backup_settings))
 
 
 def scripted_turn(

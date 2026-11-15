@@ -15,6 +15,23 @@ def test_search_lots_accepts_arabic_governorate(ctx: ToolContext) -> None:
     assert outcome.output["lots"][0]["total_price_tnd"] == 90_000
 
 
+def test_search_lots_sector_is_matched_loosely_and_filters(ctx: ToolContext) -> None:
+    outcome = execute_tool("search_lots", {"sector": "Plasturgie"}, ctx)
+    assert not outcome.is_error
+    assert [lot["id"] for lot in outcome.output["lots"]] == ["L-SFX-001", "L-SFX-002"]
+
+
+def test_search_lots_unknown_sector_lists_the_known_ones(ctx: ToolContext) -> None:
+    outcome = execute_tool("search_lots", {"sector": "food processing"}, ctx)
+    assert outcome.is_error
+    assert "agroalimentaire" in outcome.output["error"]
+
+
+def test_search_lots_description_lists_the_sectors(ctx: ToolContext) -> None:
+    schemas = {s["name"]: s for s in tool_schemas(ctx.store)}
+    assert "plasturgie" in schemas["search_lots"]["description"]
+
+
 def test_search_lots_unknown_governorate_lists_known_ones(ctx: ToolContext) -> None:
     outcome = execute_tool("search_lots", {"governorate": "Atlantis"}, ctx)
     assert outcome.is_error

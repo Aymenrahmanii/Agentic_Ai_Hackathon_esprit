@@ -6,7 +6,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from afi_agent.afizi_mock import AfiziConflict, AfiziMock, AfiziNotFound
 from afi_agent.models import Lot, Zone
-from afi_agent.store import KnowledgeStore
+from afi_agent.store import KnowledgeStore, normalize
 
 
 class ToolError(Exception):
@@ -42,7 +42,10 @@ class SearchLotsInput(_Input):
         default=None, description="Governorate name in French, e.g. 'Kairouan'."
     )
     sector: str | None = Field(
-        default=None, description="Activity sector keyword in French, e.g. 'textile'."
+        default=None,
+        description="Map the user's activity to one of the known sectors (listed in the tool "
+        "description), e.g. a food processing plant is 'agroalimentaire'. Set it whenever the "
+        "user names an activity.",
     )
     min_area_m2: float | None = Field(default=None, ge=0)
     max_price_tnd: float | None = Field(
@@ -65,8 +68,13 @@ class GetProcedureInput(_Input):
 
 class PrefillRequestInput(_Input):
     lot_id: str
-    applicant_name: str = Field(min_length=1)
-    activity: str = Field(min_length=1, description="What the investor plans to produce.")
+    applicant_name: str = Field(min_length=1, description="As the user stated it.")
+    activity: str = Field(
+        min_length=1,
+        description="What the investor plans to produce, as the user stated it. If the user "
+        "has not said, do not call this tool: ask them first. Never guess or use a generic "
+        "value.",
+    )
     company_name: str | None = None
     phone: str | None = None
 
@@ -96,11 +104,25 @@ def _resolve_governorate(text: str, store: KnowledgeStore) -> str:
     return resolved
 
 
+def known_sectors(store: KnowledgeStore) -> list[str]:
+    return sorted({sector for zone in store.zones() for sector in zone.sectors})
+
+
+def _resolve_sector(text: str, store: KnowledgeStore) -> str:
+    wanted = normalize(text)
+    for sector in known_sectors(store):
+        if normalize(sector) == wanted:
+            return sector
+    known = ", ".join(known_sectors(store))
+    raise ToolError(f"Unknown sector '{text}'. Use one of: {known}")
+
+
 def _search_lots(args: SearchLotsInput, ctx: ToolContext) -> dict[str, Any]:
     governorate = _resolve_governorate(args.governorate, ctx.store) if args.governorate else None
+    sector = _resolve_sector(args.sector, ctx.store) if args.sector else None
     matches = ctx.store.search_lots(
         governorate=governorate,
-        sector=args.sector,
+        sector=sector,
         min_area_m2=args.min_area_m2,
         max_price_tnd=args.max_price_tnd,
         limit=args.limit,
@@ -210,8 +232,9 @@ TOOLS: tuple[Tool, ...] = (
     ),
     Tool(
         "escalate_to_human",
-        "Hand the conversation to a human AFI agent when the user asks for one or the tools "
-        "cannot answer.",
+        "Hand the conversation to a human AFI agent. Only call it when the user asks to talk "
+        "to a person, or has just accepted your offer of one. Never call it for questions "
+        "unrelated to AFI land services.",
         EscalateInput,
         _escalate,
     ),
@@ -223,11 +246,14 @@ _BY_NAME = {tool.name: tool for tool in TOOLS}
 def tool_schemas(store: KnowledgeStore) -> list[dict[str, Any]]:
     """Tool definitions in the Messages API shape (name, description, input_schema)."""
     procedure_ids = ", ".join(p.id for p in store.procedures())
+    sectors = ", ".join(known_sectors(store))
     schemas = []
     for tool in TOOLS:
         description = tool.description
         if tool.name == "get_procedure":
             description += f" Available procedure ids: {procedure_ids}."
+        if tool.name == "search_lots":
+            description += f" Known sectors: {sectors}."
         schemas.append(
             {
                 "name": tool.name,

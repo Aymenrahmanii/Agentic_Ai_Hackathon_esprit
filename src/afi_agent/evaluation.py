@@ -23,8 +23,10 @@ class GoldenCase(BaseModel):
     id: str
     lang: str
     question: str
-    expected_tool: str
+    # None: the agent should answer without the tools below, e.g. ask for missing details.
+    expected_tool: str | None
     expected_args: dict[str, Any] = {}
+    forbidden_tools: list[str] = []
 
 
 @dataclass(frozen=True)
@@ -80,12 +82,19 @@ def args_match(
 def score_case(
     case: GoldenCase, reply: AgentReply, canonicalize: Canonicalize | None = None
 ) -> CaseResult:
-    calls = [r for r in reply.tool_records if r.name == case.expected_tool]
+    called = {r.name for r in reply.tool_records}
+    no_forbidden = not called & set(case.forbidden_tools)
+    if case.expected_tool is None:
+        tool_ok, args_ok = no_forbidden, True
+    else:
+        calls = [r for r in reply.tool_records if r.name == case.expected_tool]
+        tool_ok = bool(calls) and no_forbidden
+        args_ok = any(args_match(case.expected_args, r.input, canonicalize) for r in calls)
     return CaseResult(
         case_id=case.id,
         lang=case.lang,
-        tool_ok=bool(calls),
-        args_ok=any(args_match(case.expected_args, r.input, canonicalize) for r in calls),
+        tool_ok=tool_ok,
+        args_ok=args_ok,
         called=[r.name for r in reply.tool_records],
         latency_ms=reply.latency_ms,
         script_ok=style_checks.script_ok(case.lang, reply.text),

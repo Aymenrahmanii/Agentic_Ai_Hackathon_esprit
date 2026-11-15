@@ -11,3 +11,21 @@
 {"id": "derja-ar-escalate", "lang": "derja-ar", "question": "نحب نحكي مع موظف من الوكالة", "expected_tool": "escalate_to_human", "expected_args": {}}
 {"id": "en-escalate", "lang": "en", "question": "I want to talk to a human agent.", "expected_tool": "escalate_to_human", "expected_args": {}}
 {"id": "arabizi-prefill", "lang": "derja-latin", "question": "7ajezli el lot L-KAI-001, esmi Sami Trabelsi w el nachat mte3i textile", "expected_tool": "prefill_request", "expected_args": {"lot_id": "L-KAI-001"}}
+{"id": "derja-ar-compare", "lang": "derja-ar", "question": "شنوة الفرق بين المنطقة الصناعية في باجة و في صفاقس؟", "expected_tool": "compare_zones", "expected_args": {"places": ["Béja", "Sfax"]}}
+{"id": "msa-compare", "lang": "ar", "question": "قارن لي بين المناطق الصناعية في القيروان وباجة من حيث البنية التحتية.", "expected_tool": "compare_zones", "expected_args": {"places": ["Kairouan", "Béja"]}}
+{"id": "arabizi-procedure", "lang": "derja-latin", "question": "chnowa el wra9 elli lazmin bech na7jez ardh sina3iya?", "expected_tool": "get_procedure", "expected_args": {"procedure_id": "reservation_lot"}}
+{"id": "arabizi-track", "lang": "derja-latin", "question": "win wsel el dossier mte3i? numero DEMO-0001", "expected_tool": "track_dossier", "expected_args": {"tracking_number": "DEMO-0001"}}
+{"id": "arabizi-escalate", "lang": "derja-latin", "question": "n7eb nahki m3a 3abd mel AFI min fadhlek", "expected_tool": "escalate_to_human", "expected_args": {}}
+{"id": "en-search-sector-price", "lang": "en", "question": "Is there any land for a food processing plant under 200,000 dinars?", "expected_tool": "search_lots", "expected_args": {"sector": "agroalimentaire", "max_price_tnd": 200000}}
+{"id": "fr-search-sector", "lang": "fr", "question": "Je cherche un terrain pour une usine de plasturgie.", "expected_tool": "search_lots", "expected_args": {"sector": "plasturgie"}}
+{"id": "msa-search-area", "lang": "ar", "question": "أبحث عن أرض صناعية في سيدي بوزيد تتجاوز مساحتها 8000 متر مربع.", "expected_tool": "search_lots", "expected_args": {"governorate": "Sidi Bouzid", "min_area_m2": 8000}}
+{"id": "derja-ar-prefill", "lang": "derja-ar", "question": "نحب نحجز L-BEJ-001، إسمي سامي بن صالح والنشاط متاعي صناعات غذائية", "expected_tool": "prefill_request", "expected_args": {"lot_id": "L-BEJ-001"}}
+{"id": "en-prefill", "lang": "en", "question": "Please reserve lot L-SFX-002 for me. I'm Leila Ben Ali and we make plastic parts.", "expected_tool": "prefill_request", "expected_args": {"lot_id": "L-SFX-002"}}
+{"id": "en-auction", "lang": "en", "question": "How do I take part in an auction for industrial lots?", "expected_tool": "get_procedure", "expected_args": {"procedure_id": "vente_aux_encheres"}}
+{"id": "derja-ar-auction", "lang": "derja-ar", "question": "كيفاش نجم نشارك في البتة متاع الأراضي الصناعية؟", "expected_tool": "get_procedure", "expected_args": {"procedure_id": "vente_aux_encheres"}}
+{"id": "fr-prefill-missing-name", "lang": "fr", "question": "Réservez-moi le lot L-KAI-002.", "expected_tool": null, "forbidden_tools": ["prefill_request"]}
+{"id": "derja-ar-prefill-missing-activity", "lang": "derja-ar", "question": "حجزلي L-SBZ-001 من فضلك، إسمي كريم", "expected_tool": null, "forbidden_tools": ["prefill_request"]}
+{"id": "fr-sold-lot", "lang": "fr", "question": "Je veux réserver le lot L-KAI-003, je m'appelle Karim Haddad et mon activité est le textile.", "expected_tool": "prefill_request", "expected_args": {"lot_id": "L-KAI-003"}}
+{"id": "fr-unknown-governorate", "lang": "fr", "question": "Avez-vous des lots disponibles à Tozeur ?", "expected_tool": "search_lots", "expected_args": {}}
+{"id": "en-out-of-scope", "lang": "en", "question": "What's the weather going to be like in Tunis tomorrow?", "expected_tool": null, "forbidden_tools": ["search_lots", "compare_zones", "get_procedure", "prefill_request", "track_dossier"]}
+{"id": "derja-ar-greeting", "lang": "derja-ar", "question": "عسلامة، شنية تنجم تعاونّي فيه؟", "expected_tool": null, "forbidden_tools": ["prefill_request", "track_dossier", "escalate_to_human"]}

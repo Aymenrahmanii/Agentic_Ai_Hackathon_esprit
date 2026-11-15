@@ -1,9 +1,10 @@
 """Run the golden set against the real model. Every case spends API quota (or money).
 
-Usage: uv run --env-file .env python evals/run_eval.py [--limit N]
+Usage: uv run --env-file .env python evals/run_eval.py [--provider gemini] [--model M] [--limit N]
 """
 
 import argparse
+import time
 from dataclasses import replace
 from datetime import datetime
 from pathlib import Path
@@ -11,13 +12,16 @@ from typing import Any
 
 from afi_agent.afizi_mock import AfiziMock
 from afi_agent.agent import Agent, AgentReply
-from afi_agent.config import load_settings
+from afi_agent.config import PROVIDER_PRESETS, load_settings, with_provider_preset
 from afi_agent.evaluation import load_cases, results_to_json, run_cases, summarize
-from afi_agent.llm import build_llm
+from afi_agent.llm import LLMError, build_llm
 from afi_agent.store import InMemoryStore
 from afi_agent.tools import ToolContext
 
 EVALS_DIR = Path(__file__).resolve().parent
+# Free tiers return 429 under bursts; a short backoff keeps a run from losing cases to it.
+RETRIES = 3
+RETRY_WAIT_S = 20.0
 
 
 def main() -> None:
@@ -25,19 +29,47 @@ def main() -> None:
     parser.add_argument("--golden", type=Path, default=EVALS_DIR / "golden.jsonl")
     parser.add_argument("--limit", type=int, default=None, help="Only run the first N cases.")
     parser.add_argument("--model", default=None, help="Override AFI_MODEL for this run.")
+    parser.add_argument(
+        "--only", default=None, help="Comma-separated case ids to run, e.g. en-compare,fr-track."
+    )
+    parser.add_argument(
+        "--provider",
+        choices=sorted(PROVIDER_PRESETS),
+        default=None,
+        help="Use a preset endpoint and its key variable instead of AFI_BASE_URL/AFI_API_KEY.",
+    )
+    parser.add_argument(
+        "--pause", type=float, default=0.0, help="Seconds to wait between cases (free-tier RPM)."
+    )
     args = parser.parse_args()
 
     settings = load_settings()
+    if args.provider:
+        settings = with_provider_preset(settings, args.provider)
     if args.model:
         settings = replace(settings, model=args.model)
+    # Measure one model: a silent switch to the backup provider would blur the comparison.
+    settings = replace(settings, fallback_provider=None)
     llm = build_llm(settings)
     reference_store = InMemoryStore.from_file(settings.seed_path)
+    first_case = True
 
     def ask(question: str) -> AgentReply:
-        # Fresh store and back office per case so one case cannot affect the next.
-        store = InMemoryStore.from_file(settings.seed_path)
-        ctx = ToolContext(store=store, afizi=AfiziMock(store))
-        return Agent(llm, ctx, max_steps=settings.max_agent_steps).respond([], question)
+        nonlocal first_case
+        if args.pause and not first_case:
+            time.sleep(args.pause)
+        first_case = False
+        for attempt in range(1, RETRIES + 1):
+            # Fresh store and back office per case so one case cannot affect the next.
+            store = InMemoryStore.from_file(settings.seed_path)
+            ctx = ToolContext(store=store, afizi=AfiziMock(store))
+            try:
+                return Agent(llm, ctx, max_steps=settings.max_agent_steps).respond([], question)
+            except LLMError as exc:
+                if not exc.retryable or attempt == RETRIES:
+                    raise
+                time.sleep(RETRY_WAIT_S * attempt)
+        raise AssertionError("unreachable")
 
     def canonicalize(key: str, value: Any) -> Any:
         if key == "governorate" and isinstance(value, str):
@@ -46,7 +78,14 @@ def main() -> None:
             return [reference_store.resolve_governorate(v) or v for v in value]
         return value
 
-    cases = load_cases(args.golden)[: args.limit]
+    cases = load_cases(args.golden)
+    if args.only:
+        wanted = {case_id.strip() for case_id in args.only.split(",")}
+        unknown = wanted - {case.id for case in cases}
+        if unknown:
+            parser.error(f"unknown case ids: {', '.join(sorted(unknown))}")
+        cases = [case for case in cases if case.id in wanted]
+    cases = cases[: args.limit]
     results = run_cases(cases, ask, canonicalize)
 
     for r in results:

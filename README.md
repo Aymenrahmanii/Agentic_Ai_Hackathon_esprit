@@ -11,7 +11,7 @@ from AFI's public pages before any demo.
 ```bash
 uv sync
 uv run pytest
-cp .env.example .env   # then set AFI_API_KEY
+cp .env.example .env   # then set GEMINI_API_KEY and GROQ_API_KEY
 uv run --env-file .env uvicorn afi_agent.api:create_app --factory --reload
 ```
 
@@ -19,10 +19,15 @@ Then open http://127.0.0.1:8000/docs and try `POST /chat`.
 
 ## Model provider
 
-The default is any OpenAI-compatible endpoint, configured for Groq's free tier. Switch
-provider or model in `.env` (`AFI_PROVIDER`, `AFI_BASE_URL`, `AFI_API_KEY`, `AFI_MODEL`);
-`.env.example` lists Gemini, OpenRouter, Ollama and Anthropic settings. Compare candidates
-with the eval before choosing one.
+The default is Gemini 3.5 Flash-Lite, with Groq's `openai/gpt-oss-120b` as the fallback. If
+Gemini is rate-limited or unreachable, the agent answers with Groq and stays on it for 60
+seconds before trying Gemini again. The fallback is skipped when `GROQ_API_KEY` is empty.
+
+On the 31-case golden set both models pass 30 cases, but Gemini answers in about 2.4 s
+(median) against 5–10 s for Groq's free tier, which also allows only about 200,000 tokens a
+day. Settings are in `.env` (`AFI_PROVIDER`, `AFI_FALLBACK_PROVIDER`, `GEMINI_MODEL`,
+`GROQ_MODEL`); `.env.example` also lists OpenRouter, Ollama and Anthropic. Compare candidates
+with the eval before switching.
 
 ## How it fits together
 
@@ -55,11 +60,22 @@ The agent still reads from `InMemoryStore`. A Neo4j-backed store only has to imp
 ## Evaluation
 
 ```bash
-uv run --env-file .env python evals/run_eval.py --limit 3
+uv run --env-file .env python evals/run_eval.py --pause 2
 ```
 
-Each case spends API quota (or money on a paid provider). Results are saved under `evals/results/`. Grow
-`evals/golden.jsonl` towards 50 cases and have a native speaker review the Derja ones.
+Useful options: `--only id1,id2` runs selected cases, `--provider groq` (or `gemini`) picks
+the provider, and `--model` overrides its model. The eval never uses the fallback, so each run
+measures exactly one model.
+
+Each case spends API quota (or money on a paid provider). Results, including every reply, are
+saved under `evals/results/`.
+
+Each case scores two things. **Passed**: the right tool was called with the right arguments,
+or, for cases with `"expected_tool": null`, no forbidden tool was called (for example, not
+preparing a request when the applicant's name is missing). **Style**: the reply is in the user's
+language and script, contains no markdown, and gives any ticket or draft id the tools returned.
+Neither judges the quality of the Derja, so have a native speaker review the replies. Grow
+`evals/golden.jsonl` towards 50 cases.
 
 ## Not built yet
 

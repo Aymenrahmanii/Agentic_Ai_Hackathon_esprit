@@ -2,6 +2,8 @@ import json
 from dataclasses import replace
 from typing import Any
 
+import httpx
+import openai
 import pytest
 from openai.types.chat import ChatCompletion
 
@@ -177,6 +179,74 @@ def test_full_turn_round_trips_through_the_adapter(ctx: ToolContext) -> None:
     assert [m["role"] for m in second_request] == ["system", "user", "assistant", "tool"]
     assert second_request[3]["tool_call_id"] == "c1"
     assert json.loads(second_request[3]["content"])["count"] == 2
+
+
+def bad_request(message: str) -> openai.BadRequestError:
+    response = httpx.Response(400, request=httpx.Request("POST", "https://example.invalid"))
+    return openai.BadRequestError(message, response=response, body={"error": {"message": message}})
+
+
+class FlakyClient(FakeOpenAIClient):
+    def __init__(self, failures: list[Exception], completions: list[ChatCompletion]) -> None:
+        super().__init__(completions)
+        self._failures = iter(failures)
+
+    def create(self, **request: Any) -> ChatCompletion:
+        failure = next(self._failures, None)
+        if failure is not None:
+            self.requests.append(request)
+            raise failure
+        return super().create(**request)
+
+
+def test_gemini_thought_signature_is_sent_back_with_the_tool_call(ctx: ToolContext) -> None:
+    signature = {"google": {"thought_signature": "c2lnbmF0dXJl"}}
+    first = tool_call_message("c1", "search_lots", '{"governorate": "Sfax"}')
+    first["tool_calls"][0]["extra_content"] = signature
+    client = FakeOpenAIClient(
+        [completion(first, "tool_calls"), completion({"content": "Deux lots."}, "stop")]
+    )
+
+    Agent(compat_llm(client), ctx).respond([], "Lots à Sfax ?")
+
+    echoed = client.requests[1]["messages"][2]["tool_calls"][0]
+    assert echoed["extra_content"] == signature
+
+
+def test_calls_without_extras_send_no_extra_content() -> None:
+    client = FakeOpenAIClient(
+        [completion(tool_call_message("c1", "search_lots", "{}"), "tool_calls")]
+    )
+
+    turn = compat_llm(client).complete(system="S", messages=[], tools=[])
+
+    assert turn.tool_calls[0].extra_content is None
+    assert "extra_content" not in turn.assistant_content[0]
+
+
+def test_malformed_tool_call_400_is_retried() -> None:
+    client = FlakyClient(
+        [bad_request("Failed to parse tool call arguments as JSON")],
+        [completion({"content": "Bonjour"}, "stop")],
+    )
+
+    turn = compat_llm(client).complete(system="S", messages=[], tools=[])
+
+    assert turn.text == "Bonjour"
+    assert len(client.requests) == 2
+
+
+def test_other_400s_and_repeated_tool_failures_are_not_hidden() -> None:
+    other = FlakyClient([bad_request("model not found")], [])
+    with pytest.raises(LLMError, match="model not found"):
+        compat_llm(other).complete(system="S", messages=[], tools=[])
+    assert len(other.requests) == 1
+
+    malformed = bad_request("tool_use_failed")
+    always = FlakyClient([malformed, malformed, malformed], [])
+    with pytest.raises(LLMError):
+        compat_llm(always).complete(system="S", messages=[], tools=[])
+    assert len(always.requests) == 3
 
 
 def test_build_llm_selects_the_provider(monkeypatch: pytest.MonkeyPatch) -> None:

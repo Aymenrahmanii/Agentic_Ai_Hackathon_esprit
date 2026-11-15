@@ -7,6 +7,7 @@ from afi_agent.evaluation import (
     args_match,
     load_cases,
     run_cases,
+    score_case,
     summarize,
 )
 from afi_agent.llm import ScriptedLLM, ToolCall, scripted_turn
@@ -20,7 +21,8 @@ def test_golden_set_is_valid_and_targets_real_tools() -> None:
     tool_names = {tool.name for tool in TOOLS}
     assert len(cases) >= 10
     assert len({case.id for case in cases}) == len(cases)
-    assert {case.expected_tool for case in cases} <= tool_names
+    assert {case.expected_tool for case in cases} - {None} <= tool_names
+    assert {tool for case in cases for tool in case.forbidden_tools} <= tool_names
 
 
 def test_args_match_is_loose_on_strings_and_allows_extras() -> None:
@@ -80,6 +82,45 @@ def test_run_cases_scores_tool_choice_and_arguments(ctx: ToolContext) -> None:
     summary = summarize(results)
     assert summary["passed"] == 1
     assert summary["accuracy_by_lang"] == {"fr": 0.5, "en": 0.0}
+
+
+def test_no_tool_cases_fail_only_when_a_forbidden_tool_is_called(ctx: ToolContext) -> None:
+    case = GoldenCase(
+        id="missing-name",
+        lang="fr",
+        question="Réservez-moi le lot L-KAI-002.",
+        expected_tool=None,
+        forbidden_tools=["prefill_request"],
+    )
+    prefill = ToolCall(
+        "t", "prefill_request", {"lot_id": "L-KAI-002", "applicant_name": "X", "activity": "Y"}
+    )
+    asked = Agent(ScriptedLLM([scripted_turn("Quel est votre nom ?")]), ctx).respond([], "?")
+    invented = Agent(
+        ScriptedLLM([scripted_turn(tool_calls=[prefill]), scripted_turn("ok")]), ctx
+    ).respond([], "?")
+
+    assert score_case(case, asked).passed
+    assert not score_case(case, invented).passed
+
+
+def test_forbidden_tools_also_apply_when_a_tool_is_expected(ctx: ToolContext) -> None:
+    case = GoldenCase(
+        id="search-only",
+        lang="fr",
+        question="?",
+        expected_tool="search_lots",
+        forbidden_tools=["escalate_to_human"],
+    )
+    turn = scripted_turn(
+        tool_calls=[
+            ToolCall("a", "search_lots", {}),
+            ToolCall("b", "escalate_to_human", {"reason": "x"}),
+        ]
+    )
+    reply = Agent(ScriptedLLM([turn, scripted_turn("ok")]), ctx).respond([], "?")
+
+    assert not score_case(case, reply).passed
 
 
 def test_run_cases_records_failures_instead_of_stopping() -> None:
